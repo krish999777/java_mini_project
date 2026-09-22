@@ -2,10 +2,11 @@ import java.sql.*;
 import data.Role;
 import db.DBConnection;
 import myExceptions.LoginException;
+import session.Session;
 public class Login {
-    public static Role login(String username,String password) throws SQLException,LoginException{
+    public static void login(String username,String password) throws SQLException,LoginException{
         Connection connection=DBConnection.getConnection();
-        PreparedStatement statement=connection.prepareStatement("SELECT password,is_active,role FROM users WHERE username=?");
+        PreparedStatement statement=connection.prepareStatement("SELECT id,password,is_active,role FROM users WHERE username=?");
         statement.setString(1,username);
         ResultSet rs=statement.executeQuery();
         if(!rs.next()){
@@ -19,6 +20,7 @@ public class Login {
             throw new LoginException(3);
         }
         Role r=Role.valueOf(rs.getString("role"));
-        return r;
+        int id=rs.getInt("id");
+        Session.start(id, r);
     }
 }
