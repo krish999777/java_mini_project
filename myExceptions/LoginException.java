@@ -1,7 +1,7 @@
 package myExceptions;
 public class LoginException extends Exception{
     private int code;//1 for does not exist, 2 for wrong password and 3 for not active
-    LoginException(int c){
+    public LoginException(int c){
         code=c;
     }
     public String toString(){
