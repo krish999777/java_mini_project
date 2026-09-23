@@ -2,8 +2,8 @@ package session;
 import data.Role;
 
 public class Session {
-    static int id;
-    static Role role;
+    private static int id;
+    private static Role role;
     public static void start(int i,Role r) {
         id = i;
         role = r;
