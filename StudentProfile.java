@@ -1,7 +1,7 @@
 import java.sql.*;
 import session.Session;
 import db.DBConnection;
-import data.Role;
+import data.*;
 import myExceptions.*;
 public class StudentProfile {
     public static void createProfile(String fullName,String email,String phone,String college,String course,int year,String bio,String githubUrl,String linkedinUrl) throws RoleException,SQLException,MissingFieldException{
@@ -98,6 +98,47 @@ public class StudentProfile {
                 statement.close();
             }
 
+        }
+    }
+    public static StudentProfileModel getProfile() throws RoleException,SQLException,GeneralException{
+        Role role=Session.getRole();
+        int userId=Session.getId();
+        if(role!=Role.STUDENT){
+            throw new RoleException("Student");
+        }
+        Connection connection=null;
+        Statement statement=null;
+        ResultSet rs=null;
+        try{
+            connection=DBConnection.getConnection();
+            statement=connection.createStatement();
+            rs=statement.executeQuery("SELECT * FROM students WHERE user_id="+userId);
+            if(!rs.next()){
+                return null;//User profile does not exist
+            }
+            int year=rs.getInt("year");
+            return new StudentProfileModel(
+                rs.getInt("id"),
+                rs.getString("full_name"),
+                rs.getString("email"),
+                rs.getString("phone"),
+                rs.getString("college"),
+                rs.getString("course"),
+                year==0?-1:year,
+                rs.getString("bio"),
+                rs.getString("github_url"),
+                rs.getString("linkedin_url")
+            );
+        }finally{
+            if(connection!=null){
+                connection.close();
+            }
+            if(statement!=null){
+                statement.close();
+            }
+            if(rs!=null){
+                rs.close();
+            }
         }
     }
 }
