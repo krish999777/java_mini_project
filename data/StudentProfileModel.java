@@ -23,4 +23,7 @@ public class StudentProfileModel {
         githubUrl=g;
         linkedinUrl=l;
     }
+    public String toString(){
+        return "id"+id+"\n"+"full name"+fullName+"\n"+"email"+email+"\n"+"phone"+phone+"\n"+"college"+college+"\n"+"course"+course+"\n"+"year"+year+"\n"+"bio"+bio+"\n"+"githubUrl"+githubUrl+"\n"+"linkedinUrl"+linkedinUrl+"\n";
+    }
 }
