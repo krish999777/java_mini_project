@@ -205,4 +205,29 @@ public class StudentProfile {
             s.setString(index,value);
         }
     }
+    public static int getStudentId(int userId) throws SQLException{
+        Connection connection=null;
+        PreparedStatement statement=null;
+        ResultSet rs=null;
+        try{
+            connection=DBConnection.getConnection();
+            statement=connection.prepareStatement("SELECT id FROM students WHERE user_id=?");
+            statement.setInt(1,userId);
+            rs=statement.executeQuery();
+            if(!rs.next()){
+                return -1;
+            }
+            return rs.getInt("id");
+        }finally{
+            if(connection!=null){
+                connection.close();
+            }
+            if(statement!=null){
+                statement.close();
+            }
+            if(rs!=null){
+                rs.close();
+            }
+        }
+    }
 }
