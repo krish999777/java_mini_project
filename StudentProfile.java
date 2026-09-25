@@ -57,12 +57,12 @@ public class StudentProfile {
                 cur++;
             }
             if(githubUrl.length()!=0){
-                fields[cur]="githubUrl";
+                fields[cur]="github_url";
                 values[cur]=githubUrl;
                 cur++;
             }
             if(linkedinUrl.length()!=0){
-                fields[cur]="linkedinUrl";
+                fields[cur]="linkedin_url";
                 values[cur]=linkedinUrl;
                 cur++;
             }
@@ -129,6 +129,101 @@ public class StudentProfile {
                 rs.getString("github_url"),
                 rs.getString("linkedin_url")
             );
+        }finally{
+            if(connection!=null){
+                connection.close();
+            }
+            if(statement!=null){
+                statement.close();
+            }
+            if(rs!=null){
+                rs.close();
+            }
+        }
+    }
+    public static void updateProfile(String fullName,String email,String phone,String college,String course,int year,String bio,String githubUrl,String linkedinUrl) throws MissingFieldException,RoleException,SQLException,GeneralException{
+        Role role=Session.getRole();
+        int userId=Session.getId();
+        fullName=fullName.trim();
+        email=email.trim();
+        if(fullName.length()==0){
+            throw new MissingFieldException("fullName");
+        }
+        if(email.length()==0){
+            throw new MissingFieldException("email");
+        }
+        if(role!=Role.STUDENT){
+            throw new RoleException("Student");
+        }
+        Connection connection=null;
+        PreparedStatement statement=null;
+        ResultSet rs=null;
+        try{
+            connection=DBConnection.getConnection();
+            String fields[]=new String[12];
+            String values[]=new String[12];
+            statement=connection.prepareStatement("SELECT 1 FROM students WHERE user_id="+userId);
+            rs=statement.executeQuery();
+            if(!rs.next()){
+                throw new GeneralException("User profile does not exist");
+            }
+            fields[0]="full_name";
+            values[0]=fullName;
+            fields[1]="email";
+            values[1]=email;
+            int cur=2;
+            if(phone.length()!=0){
+                fields[cur]="phone";
+                values[cur]=phone;
+                cur++;
+            }
+            if(college.length()!=0){
+                fields[cur]="college";
+                values[cur]=college;
+                cur++;
+            }
+            if(course.length()!=0){
+                fields[cur]="course";
+                values[cur]=course;
+                cur++;
+            }
+            if(year!=-1){
+                fields[cur]="year";
+                values[cur]="_"+year;
+                cur++;
+            }
+            if(bio.length()!=0){
+                fields[cur]="bio";
+                values[cur]=bio;
+                cur++;
+            }
+            if(githubUrl.length()!=0){
+                fields[cur]="github_url";
+                values[cur]=githubUrl;
+                cur++;
+            }
+            if(linkedinUrl.length()!=0){
+                fields[cur]="linkedin_url";
+                values[cur]=linkedinUrl;
+                cur++;
+            }
+            String fieldValuePairs[]=new String[cur];
+            for(int i=0;i<cur;i++){
+                fieldValuePairs[i]=fields[i]+"=?";
+            }
+            String query="UPDATE students SET "+String.join(",",fieldValuePairs)+" WHERE user_id="+userId;
+
+            statement=connection.prepareStatement(query);
+
+            for(int i=0;i<cur;i++){
+                String val=values[i];
+                if(val.charAt(0)=='_'){
+                    statement.setInt(i+1,Integer.parseInt(val.substring(1)));
+                }else{
+                    statement.setString(i+1,val);
+                }
+            }
+            statement.executeUpdate();
         }finally{
             if(connection!=null){
                 connection.close();
