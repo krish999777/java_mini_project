@@ -160,69 +160,24 @@ public class StudentProfile {
         ResultSet rs=null;
         try{
             connection=DBConnection.getConnection();
-            String fields[]=new String[12];
-            String values[]=new String[12];
             statement=connection.prepareStatement("SELECT 1 FROM students WHERE user_id="+userId);
             rs=statement.executeQuery();
             if(!rs.next()){
                 throw new GeneralException("User profile does not exist");
             }
-            fields[0]="full_name";
-            values[0]=fullName;
-            fields[1]="email";
-            values[1]=email;
-            int cur=2;
-            if(phone.length()!=0){
-                fields[cur]="phone";
-                values[cur]=phone;
-                cur++;
-            }
-            if(college.length()!=0){
-                fields[cur]="college";
-                values[cur]=college;
-                cur++;
-            }
-            if(course.length()!=0){
-                fields[cur]="course";
-                values[cur]=course;
-                cur++;
-            }
-            if(year!=-1){
-                fields[cur]="year";
-                values[cur]="_"+year;
-                cur++;
-            }
-            if(bio.length()!=0){
-                fields[cur]="bio";
-                values[cur]=bio;
-                cur++;
-            }
-            if(githubUrl.length()!=0){
-                fields[cur]="github_url";
-                values[cur]=githubUrl;
-                cur++;
-            }
-            if(linkedinUrl.length()!=0){
-                fields[cur]="linkedin_url";
-                values[cur]=linkedinUrl;
-                cur++;
-            }
-            String fieldValuePairs[]=new String[cur];
-            for(int i=0;i<cur;i++){
-                fieldValuePairs[i]=fields[i]+"=?";
-            }
-            String query="UPDATE students SET "+String.join(",",fieldValuePairs)+" WHERE user_id="+userId;
-
+            
+            String query="UPDATE students SET full_name = ?,email = ?,phone = ?,college = ?,course = ?,year = ?,bio = ?,github_url = ?,linkedin_url = ? WHERE user_id = "+userId;
             statement=connection.prepareStatement(query);
+            setValue(statement,1,fullName);
+            setValue(statement,2,email);
+            setValue(statement,3,phone);
+            setValue(statement,4,college);
+            setValue(statement,5,course);
+            setValue(statement,6,year);
+            setValue(statement,7,bio);
+            setValue(statement,8,githubUrl);
+            setValue(statement,9,linkedinUrl);
 
-            for(int i=0;i<cur;i++){
-                String val=values[i];
-                if(val.charAt(0)=='_'){
-                    statement.setInt(i+1,Integer.parseInt(val.substring(1)));
-                }else{
-                    statement.setString(i+1,val);
-                }
-            }
             statement.executeUpdate();
         }finally{
             if(connection!=null){
@@ -234,6 +189,20 @@ public class StudentProfile {
             if(rs!=null){
                 rs.close();
             }
+        }
+    }
+    private static void setValue(PreparedStatement s,int index,int value) throws SQLException{
+        if(value==-1){
+            s.setNull(index,Types.VARCHAR);
+        }else{
+            s.setInt(index,value);
+        }
+    }
+    private static void setValue(PreparedStatement s,int index,String value) throws SQLException{
+        if(value.length()==0){
+            s.setNull(index,Types.INTEGER);
+        }else{
+            s.setString(index,value);
         }
     }
 }
