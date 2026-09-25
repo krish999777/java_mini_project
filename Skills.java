@@ -55,4 +55,38 @@ public class Skills {
             }
         }
     }
+    public static String[] getSkills() throws RoleException,SQLException{
+        int userId=Session.getId();
+        Role role=Session.getRole();
+        if(role!=Role.STUDENT){
+            throw new RoleException("Student");
+        }
+        Connection connection=null;
+        Statement statement=null;
+        ResultSet rs=null;
+        try{
+            connection=DBConnection.getConnection();
+            statement=connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            rs=statement.executeQuery("SELECT skills.name as skill FROM users RIGHT JOIN students ON students.user_id=users.id RIGHT JOIN student_skills ON students.id=student_skills.student_id LEFT JOIN skills on student_skills.skill_id=skills.id WHERE users.id="+userId);
+            int rowCount=rs.last() ? rs.getRow() : 0;
+            rs.beforeFirst();
+            String skills[]=new String[rowCount];
+            int i=0;
+            while(rs.next()){
+                skills[i]=rs.getString("skill");
+                i++;
+            }
+            return skills;
+        }finally{
+            if(connection!=null){
+                connection.close();
+            }
+            if(statement!=null){
+                statement.close();
+            }
+            if(rs!=null){
+                rs.close();
+            }
+        }
+    }
 }

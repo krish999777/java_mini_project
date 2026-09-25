@@ -100,7 +100,7 @@ public class StudentProfile {
 
         }
     }
-    public static StudentProfileModel getProfile() throws RoleException,SQLException,GeneralException{
+    public static StudentProfileModel getProfile() throws RoleException,SQLException,GeneralException{// this is not complete this should include all the other things like skills also
         Role role=Session.getRole();
         int userId=Session.getId();
         if(role!=Role.STUDENT){
