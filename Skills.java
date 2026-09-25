@@ -14,6 +14,10 @@ public class Skills {
         if(role!=Role.STUDENT){
             throw new RoleException("Student");
         }
+        int studentId=StudentProfile.getStudentId(userId);
+        if(studentId==-1){
+            throw new GeneralException("Student profile does not exist");
+        }
         try{
             connection=DBConnection.getConnection();
             statement=connection.prepareStatement("SELECT id FROM skills WHERE LOWER(name)=?");
@@ -35,9 +39,20 @@ public class Skills {
             }else{
                 id=rs.getInt("id");
             }
-            System.out.println(id);
+            statement=connection.prepareStatement("INSERT INTO student_skills (student_id,skill_id) VALUES (?,?)");
+            statement.setInt(1,studentId);
+            statement.setInt(2,id);
+            statement.executeUpdate();
         }finally{
-
+            if(connection!=null){
+                connection.close();
+            }
+            if(statement!=null){
+                statement.close();
+            }
+            if(rs!=null){
+                rs.close();
+            }
         }
     }
 }
