@@ -16,6 +16,7 @@ class Main{
             //     System.out.println(s[i]);
             // }
             // System.out.println(Projects.getProjects()[0]);
+            Achievements.addAchievement("Hackathon win", "Won first prize at hackathon hosted by st arnolds college");
         }catch(Exception e){
             System.out.println(e);
         }
