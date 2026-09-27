@@ -117,17 +117,38 @@ public class StudentProfile {
                 return null;//User profile does not exist
             }
             int year=rs.getInt("year");
+            int id=rs.getInt("id");
+            String fullName=rs.getString("full_name");
+            String email=rs.getString("email");
+            String phone=rs.getString("phone");
+            String college=rs.getString("college");
+            String course=rs.getString("course");
+            String bio=rs.getString("bio");
+            String githubUrl=rs.getString("github_url");
+            String linkedinUrl=rs.getString("linkedin_url");
+            String skills[]=Skills.getSkills();
+            ProjectModel projects[]=Projects.getProjects();
+            AchievementModel achievements[]=Achievements.getAchievements();
+            CertificationModel certifications[]=Certifications.getCertifications();
+            InternshipModel internships[]=Internships.getInternships();
+            EducationModel education[]=Education.getEducation();
             return new StudentProfileModel(
-                rs.getInt("id"),
-                rs.getString("full_name"),
-                rs.getString("email"),
-                rs.getString("phone"),
-                rs.getString("college"),
-                rs.getString("course"),
+                id,
+                fullName,
+                email,
+                phone,
+                college,
+                course,
                 year==0?-1:year,
-                rs.getString("bio"),
-                rs.getString("github_url"),
-                rs.getString("linkedin_url")
+                bio,
+                githubUrl,
+                linkedinUrl,
+                skills,
+                projects,
+                achievements,
+                certifications,
+                internships,
+                education
             );
         }finally{
             if(connection!=null){
