@@ -16,7 +16,12 @@ class Main{
             //     System.out.println(s[i]);
             // }
             // System.out.println(Projects.getProjects()[0]);
-            Achievements.addAchievement("Hackathon win", "Won first prize at hackathon hosted by st arnolds college");
+            // Achievements.addAchievement("Hackathon win", "Won first prize at hackathon hosted by st arnolds college");
+            // Certifications.addCertification("Full stack development","Scrimba","","");
+            Internships.addInternship("Deepcytes","Full stack developer","Built an https interception tool with proxy to collect data for a SOC","1/5/2026","31/6/2026");
+            // Internships.removeInternship(1);
+            // Certifications.removeCertification(2);
+
         }catch(Exception e){
             System.out.println(e);
         }

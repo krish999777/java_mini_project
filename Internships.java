@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import session.Session;
 import db.DBConnection;
 import data.*;
@@ -32,8 +33,8 @@ public class Internships {
             statement.setString(2,company);
             setValue(statement,3,role);
             setValue(statement,4,description);
-            setValue(statement,5,startDate);
-            setValue(statement,6,endDate);
+            setDateValue(statement,5,startDate);
+            setDateValue(statement,6,endDate);
             statement.executeUpdate();
         }finally{
             if(connection!=null){
@@ -112,8 +113,8 @@ public class Internships {
             setValue(statement,1,company);
             setValue(statement,2,role);
             setValue(statement,3,description);
-            setValue(statement,4,startDate);
-            setValue(statement,5,endDate);
+            setDateValue(statement,4,startDate);
+            setDateValue(statement,5,endDate);
             statement.setInt(6,id);
             statement.setInt(7,studentId);
             statement.executeUpdate();
@@ -184,6 +185,21 @@ public class Internships {
             s.setNull(index,Types.VARCHAR);
         }else{
             s.setString(index,value);
+        }
+    }
+
+
+    private static void setDateValue(PreparedStatement s,int index,String value) throws SQLException{
+        if(value.length()==0){
+            s.setNull(index,Types.DATE);
+        }else{
+            try{
+                SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
+                Date d=new Date(sdf.parse(value).getTime());
+                s.setDate(index,d);
+            }catch(Exception e){
+                s.setNull(index,Types.DATE);
+            }
         }
     }
 }
