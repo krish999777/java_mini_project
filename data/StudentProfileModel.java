@@ -17,6 +17,7 @@ public class StudentProfileModel {
     public CertificationModel certifications[];
     public InternshipModel internships[];
     public EducationModel education[];
+    // public StudentProfileModel(){}//this is for testing only
     public StudentProfileModel(int i,String f,String e,String p,String col,String cou,int y,String b,String g,String l,String s[],ProjectModel pr[],AchievementModel a[],CertificationModel c[],InternshipModel in[],EducationModel ed[]){
         id=i;
         fullName=f;
