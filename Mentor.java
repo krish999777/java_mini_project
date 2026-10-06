@@ -90,12 +90,6 @@ public class Mentor{
                 String bio=rs.getString("bio");
                 String githubUrl=rs.getString("github_url");
                 String linkedinUrl=rs.getString("linkedin_url");
-                String skills[]=getStudentSkills(connection,id);
-                ProjectModel projects[]=getStudentProjects(connection,id);
-                AchievementModel achievements[]=getStudentAchievements(connection,id);
-                CertificationModel certifications[]=getStudentCertifications(connection,id);
-                InternshipModel internships[]=getStudentInternships(connection,id);
-                EducationModel education[]=getStudentEducation(connection,id);
                 s[i]=new StudentProfileModel(
                     id,
                     fullName,
@@ -106,13 +100,7 @@ public class Mentor{
                     yr==0?-1:yr,
                     bio,
                     githubUrl,
-                    linkedinUrl,
-                    skills,
-                    projects,
-                    achievements,
-                    certifications,
-                    internships,
-                    education
+                    linkedinUrl
                 );
                 i++;
             }
