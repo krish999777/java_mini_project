@@ -12,6 +12,7 @@ class Main{
             //     System.out.println(s[i]);
             // }
             System.out.println(Mentor.getStudent(6));
+            Mentor.GenerateResume(6);
             // Projects.addProject("ResumeHub","Full stack web app build using PERN stack","https://github.com/krish999777/resume_builder","https://resume-builder-1-u1k1.onrender.com/");
             // Skills.removeSkill("MongoDB");
             // StudentProfile.updateProfile("krish","krish2@gmail.com","","SBMP","IT",-1,"Full stack dev with experience in ai engineering,cybersecurity,devops and iot","https://github.com/krish999777","https://www.linkedin.com/in/krish-shah09");

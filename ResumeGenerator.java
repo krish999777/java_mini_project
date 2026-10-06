@@ -5,13 +5,23 @@ import java.sql.SQLException;
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.common.*;
 import org.apache.pdfbox.pdmodel.font.*;
+import session.Session;
 
 public class ResumeGenerator {
     public static void generate() throws RoleException,SQLException,GeneralException,IOException{
-        StudentProfileModel p=StudentProfile.getProfile();
+        if(Session.getRole()==Role.STUDENT){
+            generate(StudentProfile.getProfile());
+        }
+    }
+
+
+    public static void generate(StudentProfileModel p) throws GeneralException,IOException{
         String filename="resume.pdf";
         if(p==null){
             throw new GeneralException("Student profile does not exist");
+        }
+        if(filename==null || filename.trim().length()==0){
+            filename="resume.pdf";
         }
         PDDocument doc=new PDDocument();
         PDPage page=new PDPage(PDRectangle.A4);
