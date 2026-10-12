@@ -7,12 +7,15 @@ class Main{
     public static void main(String args[]){
         try{
             Login.login("krishmentor","krish123");
+            System.out.println(Mentor.getStudent(6));
+            // Mentor.GenerateResume(6);
             // StudentProfileModel s[]=Mentor.getStudents();
             // for(int i=0;i<s.length;i++){
             //     System.out.println(s[i]);
             // }
-            System.out.println(Mentor.getStudent(6));
-            Mentor.GenerateResume(6);
+            // SemesterMarks.setCurrentSemester(4);
+            // SemesterMarkModel marks[] = SemesterMarks.getSemesterMarks();
+
             // Projects.addProject("ResumeHub","Full stack web app build using PERN stack","https://github.com/krish999777/resume_builder","https://resume-builder-1-u1k1.onrender.com/");
             // Skills.removeSkill("MongoDB");
             // StudentProfile.updateProfile("krish","krish2@gmail.com","","SBMP","IT",-1,"Full stack dev with experience in ai engineering,cybersecurity,devops and iot","https://github.com/krish999777","https://www.linkedin.com/in/krish-shah09");

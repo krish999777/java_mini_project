@@ -25,7 +25,7 @@ public class Mentor {
         ResultSet rs = null;
         try {
             connection = DBConnection.getConnection();
-            String query = "SELECT DISTINCT s.id,s.full_name,s.email,s.phone,s.college,s.course,s.year,s.bio,s.github_url,s.linkedin_url FROM students s ";
+            String query = "SELECT DISTINCT s.id,s.full_name,s.email,s.phone,s.college,s.course,s.year,s.current_semester,s.bio,s.github_url,s.linkedin_url FROM students s ";
             if (skill.length() != 0) {
                 query += "JOIN student_skills ss ON ss.student_id=s.id JOIN skills sk ON ss.skill_id=sk.id ";
             }
@@ -89,6 +89,7 @@ public class Mentor {
                 String col = rs.getString("college");
                 String cou = rs.getString("course");
                 int yr = rs.getInt("year");
+                int sem = rs.getInt("current_semester");
                 String bio = rs.getString("bio");
                 String githubUrl = rs.getString("github_url");
                 String linkedinUrl = rs.getString("linkedin_url");
@@ -100,6 +101,7 @@ public class Mentor {
                         col,
                         cou,
                         yr == 0 ? -1 : yr,
+                        sem <= 0 ? 1 : sem,
                         bio,
                         githubUrl,
                         linkedinUrl);
@@ -141,6 +143,7 @@ public class Mentor {
             String col = rs.getString("college");
             String cou = rs.getString("course");
             int yr = rs.getInt("year");
+            int sem = rs.getInt("current_semester");
             String bio = rs.getString("bio");
             String githubUrl = rs.getString("github_url");
             String linkedinUrl = rs.getString("linkedin_url");
@@ -150,6 +153,7 @@ public class Mentor {
             CertificationModel certifications[] = getStudentCertifications(connection, id);
             InternshipModel internships[] = getStudentInternships(connection, id);
             EducationModel education[] = getStudentEducation(connection, id);
+            SemesterMarkModel semesterMarks[] = getStudentSemesterMarks(connection, id);
             return new StudentProfileModel(
                     id,
                     fullName,
@@ -158,6 +162,7 @@ public class Mentor {
                     col,
                     cou,
                     yr == 0 ? -1 : yr,
+                    sem <= 0 ? 1 : sem,
                     bio,
                     githubUrl,
                     linkedinUrl,
@@ -166,7 +171,8 @@ public class Mentor {
                     achievements,
                     certifications,
                     internships,
-                    education);
+                    education,
+                    semesterMarks);
         } finally {
             if (connection != null) {
                 connection.close();
@@ -359,6 +365,53 @@ public class Mentor {
                 i++;
             }
             return education;
+        } finally {
+            if (statement != null) {
+                statement.close();
+            }
+            if (rs != null) {
+                rs.close();
+            }
+        }
+    }
+
+
+    public static SemesterMarkModel[] getSemesterMarks(int studentId) throws RoleException, SQLException {
+        Role role = Session.getRole();
+        if (role != Role.MENTOR) {
+            throw new RoleException("Mentor");
+        }
+        Connection connection = null;
+        try {
+            connection = DBConnection.getConnection();
+            return getStudentSemesterMarks(connection, studentId);
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
+
+
+    private static SemesterMarkModel[] getStudentSemesterMarks(Connection connection, int studentId) throws SQLException {
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = statement.executeQuery("SELECT * FROM semester_marks WHERE student_id=" + studentId + " ORDER BY semester ASC");
+            int rowCount = rs.last() ? rs.getRow() : 0;
+            rs.beforeFirst();
+            SemesterMarkModel marks[] = new SemesterMarkModel[rowCount];
+            int i = 0;
+            while (rs.next()) {
+                marks[i] = new SemesterMarkModel(
+                        rs.getInt("id"),
+                        rs.getInt("student_id"),
+                        rs.getInt("semester"),
+                        rs.getDouble("marks"));
+                i++;
+            }
+            return marks;
         } finally {
             if (statement != null) {
                 statement.close();

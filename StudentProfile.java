@@ -117,6 +117,7 @@ public class StudentProfile {
                 return null;//User profile does not exist
             }
             int year=rs.getInt("year");
+            int currentSemester=rs.getInt("current_semester");
             int id=rs.getInt("id");
             String fullName=rs.getString("full_name");
             String email=rs.getString("email");
@@ -132,6 +133,7 @@ public class StudentProfile {
             CertificationModel certifications[]=Certifications.getCertifications();
             InternshipModel internships[]=Internships.getInternships();
             EducationModel education[]=Education.getEducation();
+            SemesterMarkModel semesterMarks[]=SemesterMarks.getEnteredMarks();
             return new StudentProfileModel(
                 id,
                 fullName,
@@ -140,6 +142,7 @@ public class StudentProfile {
                 college,
                 course,
                 year==0?-1:year,
+                currentSemester<=0?1:currentSemester,
                 bio,
                 githubUrl,
                 linkedinUrl,
@@ -148,7 +151,8 @@ public class StudentProfile {
                 achievements,
                 certifications,
                 internships,
-                education
+                education,
+                semesterMarks
             );
         }finally{
             if(connection!=null){
@@ -162,6 +166,71 @@ public class StudentProfile {
             }
         }
     }
+
+
+    public static void setCurrentSemester(int semester) throws RoleException,SQLException,GeneralException{
+        SemesterMarks.setCurrentSemester(semester);
+    }
+
+
+    public static int getCurrentSemester() throws RoleException,SQLException,GeneralException{
+        return SemesterMarks.getCurrentSemester();
+    }
+
+
+    public static void updateProfile(String fullName,String email,String phone,String college,String course,int year,int currentSemester,String bio,String githubUrl,String linkedinUrl) throws MissingFieldException,RoleException,SQLException,GeneralException{
+        Role role=Session.getRole();
+        int userId=Session.getId();
+        fullName=fullName.trim();
+        email=email.trim();
+        if(fullName.length()==0){
+            throw new MissingFieldException("fullName");
+        }
+        if(email.length()==0){
+            throw new MissingFieldException("email");
+        }
+        if(role!=Role.STUDENT){
+            throw new RoleException("Student");
+        }
+        Connection connection=null;
+        PreparedStatement statement=null;
+        ResultSet rs=null;
+        try{
+            connection=DBConnection.getConnection();
+            statement=connection.prepareStatement("SELECT 1 FROM students WHERE user_id="+userId);
+            rs=statement.executeQuery();
+            if(!rs.next()){
+                throw new GeneralException("User profile does not exist");
+            }
+            
+            String query="UPDATE students SET full_name = ?,email = ?,phone = ?,college = ?,course = ?,year = ?,current_semester = ?,bio = ?,github_url = ?,linkedin_url = ? WHERE user_id = "+userId;
+            statement=connection.prepareStatement(query);
+            setValue(statement,1,fullName);
+            setValue(statement,2,email);
+            setValue(statement,3,phone);
+            setValue(statement,4,college);
+            setValue(statement,5,course);
+            setValue(statement,6,year);
+            setValue(statement,7,currentSemester);
+            setValue(statement,8,bio);
+            setValue(statement,9,githubUrl);
+            setValue(statement,10,linkedinUrl);
+
+            statement.executeUpdate();
+        }finally{
+            if(connection!=null){
+                connection.close();
+            }
+            if(statement!=null){
+                statement.close();
+            }
+            if(rs!=null){
+                rs.close();
+            }
+        }
+    }
+
+
     public static void updateProfile(String fullName,String email,String phone,String college,String course,int year,String bio,String githubUrl,String linkedinUrl) throws MissingFieldException,RoleException,SQLException,GeneralException{
         Role role=Session.getRole();
         int userId=Session.getId();

@@ -8,6 +8,7 @@ public class StudentProfileModel {
     public String college;
     public String course;
     public int year;
+    public int currentSemester;
     public String bio;
     public String githubUrl;
     public String linkedinUrl;
@@ -17,11 +18,12 @@ public class StudentProfileModel {
     public CertificationModel certifications[];
     public InternshipModel internships[];
     public EducationModel education[];
+    public SemesterMarkModel semesterMarks[];
 
     // public StudentProfileModel(){}//this is for testing only
-    public StudentProfileModel(int i, String f, String e, String p, String col, String cou, int y, String b, String g,
+    public StudentProfileModel(int i, String f, String e, String p, String col, String cou, int y, int sem, String b, String g,
             String l, String s[], ProjectModel pr[], AchievementModel a[], CertificationModel c[], InternshipModel in[],
-            EducationModel ed[]) {
+            EducationModel ed[], SemesterMarkModel sm[]) {
         id = i;
         fullName = f;
         email = e;
@@ -29,6 +31,7 @@ public class StudentProfileModel {
         college = col;
         course = cou;
         year = y;
+        currentSemester = sem;
         bio = b;
         githubUrl = g;
         linkedinUrl = l;
@@ -38,17 +41,29 @@ public class StudentProfileModel {
         certifications = c;
         internships = in;
         education = ed;
+        semesterMarks = sm;
+    }
+
+    public StudentProfileModel(int i, String f, String e, String p, String col, String cou, int y, String b, String g,
+            String l, String s[], ProjectModel pr[], AchievementModel a[], CertificationModel c[], InternshipModel in[],
+            EducationModel ed[]) {
+        this(i, f, e, p, col, cou, y, 1, b, g, l, s, pr, a, c, in, ed, new SemesterMarkModel[0]);
+    }
+
+    public StudentProfileModel(int i, String f, String e, String p, String col, String cou, int y, int sem, String b, String g,
+            String l) {
+        this(i, f, e, p, col, cou, y, sem, b, g, l, new String[0], new ProjectModel[0], new AchievementModel[0],
+                new CertificationModel[0], new InternshipModel[0], new EducationModel[0], new SemesterMarkModel[0]);
     }
 
     public StudentProfileModel(int i, String f, String e, String p, String col, String cou, int y, String b, String g,
             String l) {
-        this(i, f, e, p, col, cou, y, b, g, l, new String[0], new ProjectModel[0], new AchievementModel[0],
-                new CertificationModel[0], new InternshipModel[0], new EducationModel[0]);
+        this(i, f, e, p, col, cou, y, 1, b, g, l);
     }
 
     public String toString() {
         String str = "id:" + id + "\n" + "full name:" + fullName + "\n" + "email:" + email + "\n" + "phone:" + phone
-                + "\n" + "college:" + college + "\n" + "course:" + course + "\n" + "year:" + year + "\n" + "bio:" + bio
+                + "\n" + "college:" + college + "\n" + "course:" + course + "\n" + "year:" + year + "\n" + "currentSemester:" + currentSemester + "\n" + "bio:" + bio
                 + "\n" + "githubUrl:" + githubUrl + "\n" + "linkedinUrl:" + linkedinUrl + "\n";
         str += "--- skills ---\n";
         if (skills != null) {
@@ -84,6 +99,12 @@ public class StudentProfileModel {
         if (education != null) {
             for (int i = 0; i < education.length; i++) {
                 str += education[i].toString() + "\n";
+            }
+        }
+        str += "--- semester marks ---\n";
+        if (semesterMarks != null) {
+            for (int i = 0; i < semesterMarks.length; i++) {
+                str += semesterMarks[i].toString() + "\n";
             }
         }
         return str;
