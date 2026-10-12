@@ -3,21 +3,21 @@ package data;
 public class EducationModel {
     public int id;
     public int studentId;
-    public String institution;
-    public String degree;
+    public String school;
+    public String board;
     public int startYear;
     public int endYear;
     public String grade;
-    public EducationModel(int i,int s,String inst,String d,int sy,int ey,String g){
+    public EducationModel(int i,int s,String sch,String b,int sy,int ey,String g){
         id=i;
         studentId=s;
-        institution=inst;
-        degree=d;
+        school=sch;
+        board=b;
         startYear=sy;
         endYear=ey;
         grade=g;
     }
     public String toString(){
-        return "id:"+id+"\n"+"student_id:"+studentId+"\n"+"institution:"+institution+"\n"+"degree:"+degree+"\n"+"start_year:"+startYear+"\n"+"end_year:"+endYear+"\n"+"grade:"+grade+"\n";
+        return "id:"+id+"\n"+"student_id:"+studentId+"\n"+"school:"+school+"\n"+"board:"+board+"\n"+"start_year:"+startYear+"\n"+"end_year:"+endYear+"\n"+"grade:"+grade+"\n";
     }
 }

@@ -71,9 +71,9 @@ public class ResumeGenerator {
                 y=drawSectionHeader(cs,fontBold,"EDUCATION",x,y,width);
                 for(int i=0;i<p.education.length;i++){
                     EducationModel ed=p.education[i];
-                    String line=ed.institution;
-                    if(ed.degree!=null && ed.degree.length()!=0){
-                        line+=" - "+ed.degree;
+                    String line=ed.school;
+                    if(ed.board!=null && ed.board.length()!=0){
+                        line+=" - "+ed.board;
                     }
                     String years="";
                     if(ed.startYear!=-1 || ed.endYear!=-1){

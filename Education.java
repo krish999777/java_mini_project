@@ -5,7 +5,7 @@ import data.*;
 import myExceptions.*;
 
 public class Education {
-    public static void addEducation(String institution,String degree,int startYear,int endYear,String grade) throws RoleException,SQLException,GeneralException,MissingFieldException{
+    public static void addEducation(String school,String board,int startYear,int endYear,String grade) throws RoleException,SQLException,GeneralException,MissingFieldException{
         Role role=Session.getRole();
         int userId=Session.getId();
         if(role!=Role.STUDENT){
@@ -15,20 +15,20 @@ public class Education {
         if(studentId==-1){
             throw new GeneralException("Student profile does not exist");
         }
-        institution=institution==null ? "" : institution.trim();
-        if(institution.length()==0){
-            throw new MissingFieldException("institution");
+        school=school==null ? "" : school.trim();
+        if(school.length()==0){
+            throw new MissingFieldException("school");
         }
-        degree=degree==null ? "" : degree.trim();
+        board=board==null ? "" : board.trim();
         grade=grade==null ? "" : grade.trim();
         Connection connection=null;
         PreparedStatement statement=null;
         try{
             connection=DBConnection.getConnection();
-            statement=connection.prepareStatement("INSERT INTO education (student_id,institution,degree,start_year,end_year,grade) VALUES (?,?,?,?,?,?)");
+            statement=connection.prepareStatement("INSERT INTO education (student_id,school,board,start_year,end_year,grade) VALUES (?,?,?,?,?,?)");
             statement.setInt(1,studentId);
-            statement.setString(2,institution);
-            setValue(statement,3,degree);
+            statement.setString(2,school);
+            setValue(statement,3,board);
             setValue(statement,4,startYear);
             setValue(statement,5,endYear);
             setValue(statement,6,grade);
@@ -76,7 +76,7 @@ public class Education {
     }
 
 
-    public static void updateEducation(int id,String institution,String degree,int startYear,int endYear,String grade) throws RoleException,SQLException,GeneralException,MissingFieldException{
+    public static void updateEducation(int id,String school,String board,int startYear,int endYear,String grade) throws RoleException,SQLException,GeneralException,MissingFieldException{
         Role role=Session.getRole();
         int userId=Session.getId();
         if(role!=Role.STUDENT){
@@ -86,11 +86,11 @@ public class Education {
         if(studentId==-1){
             throw new GeneralException("Student profile does not exist");
         }
-        institution=institution==null ? "" : institution.trim();
-        if(institution.length()==0){
-            throw new MissingFieldException("institution");
+        school=school==null ? "" : school.trim();
+        if(school.length()==0){
+            throw new MissingFieldException("school");
         }
-        degree=degree==null ? "" : degree.trim();
+        board=board==null ? "" : board.trim();
         grade=grade==null ? "" : grade.trim();
         Connection connection=null;
         PreparedStatement statement=null;
@@ -104,9 +104,9 @@ public class Education {
             if(!rs.next()){
                 throw new GeneralException("Education does not exist");
             }
-            statement=connection.prepareStatement("UPDATE education SET institution = ?,degree = ?,start_year = ?,end_year = ?,grade = ? WHERE id = ? AND student_id = ?");
-            setValue(statement,1,institution);
-            setValue(statement,2,degree);
+            statement=connection.prepareStatement("UPDATE education SET school = ?,board = ?,start_year = ?,end_year = ?,grade = ? WHERE id = ? AND student_id = ?");
+            setValue(statement,1,school);
+            setValue(statement,2,board);
             setValue(statement,3,startYear);
             setValue(statement,4,endYear);
             setValue(statement,5,grade);
@@ -154,8 +154,8 @@ public class Education {
                 education[i]=new EducationModel(
                     rs.getInt("id"),
                     rs.getInt("student_id"),
-                    rs.getString("institution"),
-                    rs.getString("degree"),
+                    rs.getString("school"),
+                    rs.getString("board"),
                     startYear==0?-1:startYear,
                     endYear==0?-1:endYear,
                     rs.getString("grade")

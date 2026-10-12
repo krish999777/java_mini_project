@@ -351,8 +351,8 @@ public class Mentor {
                 education[i] = new EducationModel(
                         rs.getInt("id"),
                         rs.getInt("student_id"),
-                        rs.getString("institution"),
-                        rs.getString("degree"),
+                        rs.getString("school"),
+                        rs.getString("board"),
                         startYear == 0 ? -1 : startYear,
                         endYear == 0 ? -1 : endYear,
                         rs.getString("grade"));
