@@ -1,9 +1,8 @@
 import javax.swing.*;
-
 import session.Session;
-
 import java.awt.*;
 import java.awt.event.*;
+import data.Role;
 
 public class LoginGUI extends JFrame implements ActionListener{
     JLabel title,message,l1,l2;
@@ -41,6 +40,15 @@ public class LoginGUI extends JFrame implements ActionListener{
                 String username=tf1.getText();
                 String password=tf2.getText();
                 Login.login(username,password);
+                Role r=Session.getRole();
+                if(r==Role.STUDENT){
+                    setVisible(false);
+                    new StudentGUI();
+                }else if(r==Role.MENTOR){
+
+                }else{
+
+                }
             }catch(Exception e){
                 message.setText(e.toString());
                 message.setVisible(true);
