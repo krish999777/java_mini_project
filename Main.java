@@ -2,12 +2,13 @@
 //java -cp ".:lib/postgresql-42.7.13.jar:lib/pdfbox-app-3.0.8.jar" Main
 // import myExceptions.LoginException;
 // import data.StudentProfileModel;
-import data.Role;
+// import data.Role;
 class Main{
     public static void main(String args[]){
         try{
-            Login.login("krishadmin","krish123");
-            Admin.createUser(Role.STUDENT, "krishtest", "krish123");
+            new LoginGUI();
+            // Login.login("krishadmin","krish123");
+            // Admin.createUser(Role.STUDENT, "krishtest", "krish123");
             // System.out.println(Mentor.getStudent(6));
             // Mentor.GenerateResume(6);
             // StudentProfileModel s[]=Mentor.getStudents();
