@@ -50,7 +50,6 @@ public class LoginGUI extends JFrame implements ActionListener{
 
                 }
             }catch(Exception ex){
-                System.out.println(ex);
                 message.setText(ex.toString());
                 message.setVisible(true);
             }
