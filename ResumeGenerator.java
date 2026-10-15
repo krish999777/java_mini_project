@@ -6,6 +6,8 @@ import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.common.*;
 import org.apache.pdfbox.pdmodel.font.*;
 import session.Session;
+import javax.swing.JFileChooser;
+import java.io.File;
 
 public class ResumeGenerator {
     public static void generate() throws RoleException,SQLException,GeneralException,IOException{
@@ -16,6 +18,11 @@ public class ResumeGenerator {
 
 
     public static void generate(StudentProfileModel p) throws GeneralException,IOException{
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Save Resume");
+        chooser.setSelectedFile(new File("resume.pdf"));
+
+        int result = chooser.showSaveDialog(null);
         String filename="resume.pdf";
         if(p==null){
             throw new GeneralException("Student profile does not exist");
@@ -179,7 +186,10 @@ public class ResumeGenerator {
         }finally{
             cs.close();
         }
-        doc.save(filename);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            doc.save(file);
+        }
         doc.close();
     }
 

@@ -12,7 +12,7 @@ public class StudentGUI extends JFrame implements ActionListener{
         setLayout(new GridLayout(2,2,10,10));
         b1=new JButton("View details");
         b2=new JButton("Edit details");
-        b3=new JButton("Generate Resume");
+        b3=new JButton("Download Resume");
         b4=new JButton("Logout");
         b1.addActionListener(this);
         b2.addActionListener(this);
@@ -32,7 +32,11 @@ public class StudentGUI extends JFrame implements ActionListener{
         }else if(b==b2){
 
         }else if(b==b3){
-
+            try{
+                ResumeGenerator.generate();
+            }catch(Exception e){
+                System.out.println(e);
+            }
         }else{
             Session.logout();
             new LoginGUI();
@@ -54,7 +58,7 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
         l2=new JLabel("");
         l2.setVisible(false);
 
-        b1=new JButton("Print resume");
+        b1=new JButton("Download resume");
         b2=new JButton("Back to home");
 
         header=new JPanel();
@@ -204,7 +208,11 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
     }
     public void actionPerformed(ActionEvent ae){
         if(ae.getSource()==b1){
-
+            try{
+                ResumeGenerator.generate();
+            }catch(Exception e){
+                System.out.println(e);
+            }
         }else{
             new StudentGUI();
             dispose();
