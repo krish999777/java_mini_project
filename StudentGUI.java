@@ -67,22 +67,36 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
         footer.add(b2);
 
         pane=new JTabbedPane();
-        profile=new JPanel();
+        profile=new JPanel(new GridLayout(0,2,10,10));
         skills=new JPanel();
-        profile.add(new JLabel("This is profile panel"));
-        skills.add(new JLabel("This is skills panel"));
 
-        pane.addTab("Profile",profile);
-        pane.addTab("Skills",skills);
+
+
 
 
         try{
             StudentProfileModel s=StudentProfile.getProfile();
-            System.out.println(s);
+            profile.add(new JLabel("Name"));
+            profile.add(new JLabel(s.fullName));
+            profile.add(new JLabel("Email"));
+            profile.add(new JLabel(s.email));
+            addProfileField(profile,s.phone,"Phone");
+            addProfileField(profile,s.college,"College");
+            addProfileField(profile,s.course,"Course");
+            addProfileField(profile,s.year,"Year");
+            addProfileField(profile,s.currentSemester,"Semester");
+            addProfileField(profile,s.bio,"Bio");
+            addProfileField(profile,s.githubUrl,"Github url");
+            addProfileField(profile,s.linkedinUrl,"Linkedin url");
+            
         }catch(Exception e){
             l2.setText(e.toString());
             l2.setVisible(true);
         }
+
+        pane.addTab("Profile",profile);
+        pane.addTab("Skills",skills);
+
         b1.addActionListener(this);
         b2.addActionListener(this);
         add(header,BorderLayout.NORTH);
@@ -99,6 +113,18 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
         }else{
             new StudentGUI();
             dispose();
+        }
+    }
+    private void addProfileField(Container profile,String value,String field){
+        if(value!=null&&value.length()!=0){
+            profile.add(new JLabel(field));
+            profile.add(new JLabel(value));
+        }
+    }
+    private void addProfileField(Container profile,int value,String field){
+        if(value!=-1){
+            profile.add(new JLabel(field));
+            profile.add(new JLabel(""+value));
         }
     }
 }
