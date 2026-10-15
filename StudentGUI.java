@@ -27,7 +27,7 @@ public class StudentGUI extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent ae){
         JButton b=(JButton)ae.getSource();
         if(b==b1){
-            // new viewDetailsGUI();
+            new viewDetailsGUI();
             dispose();
         }else if(b==b2){
 
@@ -43,13 +43,17 @@ public class StudentGUI extends JFrame implements ActionListener{
 
 class viewDetailsGUI extends JFrame implements ActionListener{
     JLabel l1,l2;
+    JButton b1,b2;
     viewDetailsGUI(){
         setSize(500,500);
-        setLayout(new GridLayout());
+        setLayout(new GridLayout(2,2,10,10));
         setLocationRelativeTo(null);
         l1=new JLabel("View Details");
         l2=new JLabel("");
         l2.setVisible(false);
+
+        b1=new JButton("Print resume");
+        b2=new JButton("Back to home");
         try{
             StudentProfileModel s=StudentProfile.getProfile();
             System.out.println(s);
@@ -57,11 +61,24 @@ class viewDetailsGUI extends JFrame implements ActionListener{
             l2.setText(e.toString());
             l2.setVisible(true);
         }
+        b1.addActionListener(this);
+        b2.addActionListener(this);
+        add(l1);
+        add(l2);
+        
+
+        add(b1);
+        add(b2);
 
         setVisible(true);
     }
     public void actionPerformed(ActionEvent ae){
+        if(ae.getSource()==b1){
 
+        }else{
+            new StudentGUI();
+            dispose();
+        }
     }
 }
 
