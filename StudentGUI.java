@@ -8,6 +8,14 @@ import myExceptions.*;
 public class StudentGUI extends JFrame implements ActionListener{
     JButton b1,b2,b3,b4;
     StudentGUI(){
+        try{
+            if(StudentProfile.getProfile()==null){
+                new CreateProfileGUI();
+                return;
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
         setSize(500,500);
         setLocationRelativeTo(null);
         setLayout(new GridLayout(2,2,10,10));
@@ -44,6 +52,98 @@ public class StudentGUI extends JFrame implements ActionListener{
             new LoginGUI();
             dispose();
         }
+    }
+}
+
+class CreateProfileGUI extends JFrame implements ActionListener{
+    JLabel l1,l2;
+    JTextField tf1,tf2,tf3,tf4,tf5,tf6,tf7,tf8,tf9;
+    JButton b1,b2;
+    JPanel header,footer,form;
+
+    CreateProfileGUI(){
+        setSize(500,500);
+        setLayout(new BorderLayout());
+        setLocationRelativeTo(null);
+        l1=new JLabel("Create Profile");
+        l2=new JLabel("");
+        l2.setVisible(false);
+
+        b1=new JButton("Create Profile");
+        b2=new JButton("Logout");
+
+        header=new JPanel(new GridLayout(1,2));
+        header.add(l1);
+        header.add(l2);
+
+        footer=new JPanel(new GridLayout(1,2));
+        footer.add(b1);
+        footer.add(b2);
+
+        form=new JPanel(new GridLayout(0,2,10,10));
+        tf1=addField(form,"Name*");
+        tf2=addField(form,"Email*");
+        tf3=addField(form,"Phone");
+        tf4=addField(form,"College");
+        tf5=addField(form,"Course");
+        tf6=addField(form,"Year");
+        tf7=addField(form,"Bio");
+        tf8=addField(form,"Github url");
+        tf9=addField(form,"Linkedin url");
+
+        b1.addActionListener(this);
+        b2.addActionListener(this);
+
+        add(header,BorderLayout.NORTH);
+        add(form,BorderLayout.CENTER);
+        add(footer,BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent ae){
+        JButton b=(JButton)ae.getSource();
+        if(b==b1){
+            try{
+                String fullName=tf1.getText().trim();
+                String email=tf2.getText().trim();
+                String phone=tf3.getText().trim();
+                String college=tf4.getText().trim();
+                String course=tf5.getText().trim();
+                int year=-1;
+                String yStr=tf6.getText().trim();
+                if(yStr.length()!=0){
+                    try{
+                        year=Integer.parseInt(yStr);
+                    }catch(NumberFormatException ex){
+                        l2.setText("Year must be a number");
+                        l2.setVisible(true);
+                        return;
+                    }
+                }
+                String bio=tf7.getText().trim();
+                String githubUrl=tf8.getText().trim();
+                String linkedinUrl=tf9.getText().trim();
+
+                StudentProfile.createProfile(fullName,email,phone,college,course,year,bio,githubUrl,linkedinUrl);
+                new StudentGUI();
+                dispose();
+            }catch(Exception ex){
+                l2.setText(ex.toString());
+                l2.setVisible(true);
+            }
+        }else{
+            Session.logout();
+            new LoginGUI();
+            dispose();
+        }
+    }
+
+    private JTextField addField(Container c,String label){
+        c.add(new JLabel(label));
+        JTextField tf=new JTextField();
+        c.add(tf);
+        return tf;
     }
 }
 
@@ -87,6 +187,15 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
             if(s==null){
                 l2.setText("Student profile does not exist");
                 l2.setVisible(true);
+                profile.add(new JLabel("No profile found."));
+                JButton bCreate=new JButton("Create Profile");
+                bCreate.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent e){
+                        new CreateProfileGUI();
+                        dispose();
+                    }
+                });
+                profile.add(bCreate);
             }else{
                 profile.add(new JLabel("Name"));
                 profile.add(new JLabel(s.fullName));
@@ -258,7 +367,7 @@ class EditDetailsGUI extends JFrame implements ActionListener{
     // Profile
     JPanel profile;
     JTextField tf1,tf2,tf3,tf4,tf5,tf6,tf7,tf8,tf9,tf10;
-    JButton bSaveProfile;
+    JButton bSaveProfile,bCreateProfile;
 
     // Skills
     JPanel skills;
@@ -337,6 +446,10 @@ class EditDetailsGUI extends JFrame implements ActionListener{
             if(s==null){
                 l2.setText("Student profile does not exist");
                 l2.setVisible(true);
+                bCreateProfile=new JButton("Create Profile");
+                bCreateProfile.addActionListener(this);
+                profile.add(new JLabel("No profile found."));
+                profile.add(bCreateProfile);
             }else{
                 // Profile
                 tf1=addEditField(profile,s.fullName,"Name");
@@ -734,6 +847,11 @@ class EditDetailsGUI extends JFrame implements ActionListener{
         Object src=ae.getSource();
         if(src==bBack){
             new StudentGUI();
+            dispose();
+            return;
+        }
+        if(src==bCreateProfile){
+            new CreateProfileGUI();
             dispose();
             return;
         }

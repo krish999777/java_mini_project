@@ -7,8 +7,14 @@ public class StudentProfile {
     public static void createProfile(String fullName,String email,String phone,String college,String course,int year,String bio,String githubUrl,String linkedinUrl) throws RoleException,SQLException,MissingFieldException{
         Role role=Session.getRole();
         int userId=Session.getId();
-        fullName=fullName.trim();
-        email=email.trim();
+        fullName=fullName==null?"":fullName.trim();
+        email=email==null?"":email.trim();
+        phone=phone==null?"":phone.trim();
+        college=college==null?"":college.trim();
+        course=course==null?"":course.trim();
+        bio=bio==null?"":bio.trim();
+        githubUrl=githubUrl==null?"":githubUrl.trim();
+        linkedinUrl=linkedinUrl==null?"":linkedinUrl.trim();
         if(fullName.length()==0){
             throw new MissingFieldException("fullName");
         }
