@@ -42,15 +42,16 @@ public class LoginGUI extends JFrame implements ActionListener{
                 Login.login(username,password);
                 Role r=Session.getRole();
                 if(r==Role.STUDENT){
-                    setVisible(false);
                     new StudentGUI();
+                    dispose();
                 }else if(r==Role.MENTOR){
 
                 }else{
 
                 }
-            }catch(Exception e){
-                message.setText(e.toString());
+            }catch(Exception ex){
+                System.out.println(ex);
+                message.setText(ex.toString());
                 message.setVisible(true);
             }
         }else{
