@@ -27,7 +27,7 @@ public class StudentGUI extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent ae){
         JButton b=(JButton)ae.getSource();
         if(b==b1){
-            new viewDetailsGUI();
+            new ViewDetailsGUI();
             dispose();
         }else if(b==b2){
 
@@ -41,12 +41,14 @@ public class StudentGUI extends JFrame implements ActionListener{
     }
 }
 
-class viewDetailsGUI extends JFrame implements ActionListener{
+class ViewDetailsGUI extends JFrame implements ActionListener{
     JLabel l1,l2;
     JButton b1,b2;
-    viewDetailsGUI(){
+    JTabbedPane pane;
+    JPanel header,footer,profile,skills;
+    ViewDetailsGUI(){
         setSize(500,500);
-        setLayout(new GridLayout(2,2,10,10));
+        setLayout(new BorderLayout());
         setLocationRelativeTo(null);
         l1=new JLabel("View Details");
         l2=new JLabel("");
@@ -54,6 +56,26 @@ class viewDetailsGUI extends JFrame implements ActionListener{
 
         b1=new JButton("Print resume");
         b2=new JButton("Back to home");
+
+        header=new JPanel();
+        header.setLayout(new GridLayout(1,2));
+        header.add(l1);
+        header.add(l2);
+
+        footer=new JPanel(new GridLayout(1,2));
+        footer.add(b1);
+        footer.add(b2);
+
+        pane=new JTabbedPane();
+        profile=new JPanel();
+        skills=new JPanel();
+        profile.add(new JLabel("This is profile panel"));
+        skills.add(new JLabel("This is skills panel"));
+
+        pane.addTab("Profile",profile);
+        pane.addTab("Skills",skills);
+
+
         try{
             StudentProfileModel s=StudentProfile.getProfile();
             System.out.println(s);
@@ -63,12 +85,11 @@ class viewDetailsGUI extends JFrame implements ActionListener{
         }
         b1.addActionListener(this);
         b2.addActionListener(this);
-        add(l1);
-        add(l2);
+        add(header,BorderLayout.NORTH);
         
+        add(pane,BorderLayout.CENTER);
 
-        add(b1);
-        add(b2);
+        add(footer,BorderLayout.SOUTH);
 
         setVisible(true);
     }
