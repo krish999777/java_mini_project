@@ -231,66 +231,66 @@ public class StudentProfile {
     }
 
 
-    public static void updateProfile(String fullName,String email,String phone,String college,String course,int year,String bio,String githubUrl,String linkedinUrl) throws MissingFieldException,RoleException,SQLException,GeneralException{
-        Role role=Session.getRole();
-        int userId=Session.getId();
-        fullName=fullName.trim();
-        email=email.trim();
-        if(fullName.length()==0){
-            throw new MissingFieldException("fullName");
-        }
-        if(email.length()==0){
-            throw new MissingFieldException("email");
-        }
-        if(role!=Role.STUDENT){
-            throw new RoleException("Student");
-        }
-        Connection connection=null;
-        PreparedStatement statement=null;
-        ResultSet rs=null;
-        try{
-            connection=DBConnection.getConnection();
-            statement=connection.prepareStatement("SELECT 1 FROM students WHERE user_id="+userId);
-            rs=statement.executeQuery();
-            if(!rs.next()){
-                throw new GeneralException("User profile does not exist");
-            }
+    // public static void updateProfile(String fullName,String email,String phone,String college,String course,int year,String bio,String githubUrl,String linkedinUrl) throws MissingFieldException,RoleException,SQLException,GeneralException{
+    //     Role role=Session.getRole();
+    //     int userId=Session.getId();
+    //     fullName=fullName.trim();
+    //     email=email.trim();
+    //     if(fullName.length()==0){
+    //         throw new MissingFieldException("fullName");
+    //     }
+    //     if(email.length()==0){
+    //         throw new MissingFieldException("email");
+    //     }
+    //     if(role!=Role.STUDENT){
+    //         throw new RoleException("Student");
+    //     }
+    //     Connection connection=null;
+    //     PreparedStatement statement=null;
+    //     ResultSet rs=null;
+    //     try{
+    //         connection=DBConnection.getConnection();
+    //         statement=connection.prepareStatement("SELECT 1 FROM students WHERE user_id="+userId);
+    //         rs=statement.executeQuery();
+    //         if(!rs.next()){
+    //             throw new GeneralException("User profile does not exist");
+    //         }
             
-            String query="UPDATE students SET full_name = ?,email = ?,phone = ?,college = ?,course = ?,year = ?,bio = ?,github_url = ?,linkedin_url = ? WHERE user_id = "+userId;
-            statement=connection.prepareStatement(query);
-            setValue(statement,1,fullName);
-            setValue(statement,2,email);
-            setValue(statement,3,phone);
-            setValue(statement,4,college);
-            setValue(statement,5,course);
-            setValue(statement,6,year);
-            setValue(statement,7,bio);
-            setValue(statement,8,githubUrl);
-            setValue(statement,9,linkedinUrl);
+    //         String query="UPDATE students SET full_name = ?,email = ?,phone = ?,college = ?,course = ?,year = ?,bio = ?,github_url = ?,linkedin_url = ? WHERE user_id = "+userId;
+    //         statement=connection.prepareStatement(query);
+    //         setValue(statement,1,fullName);
+    //         setValue(statement,2,email);
+    //         setValue(statement,3,phone);
+    //         setValue(statement,4,college);
+    //         setValue(statement,5,course);
+    //         setValue(statement,6,year);
+    //         setValue(statement,7,bio);
+    //         setValue(statement,8,githubUrl);
+    //         setValue(statement,9,linkedinUrl);
 
-            statement.executeUpdate();
-        }finally{
-            if(connection!=null){
-                connection.close();
-            }
-            if(statement!=null){
-                statement.close();
-            }
-            if(rs!=null){
-                rs.close();
-            }
-        }
-    }
+    //         statement.executeUpdate();
+    //     }finally{
+    //         if(connection!=null){
+    //             connection.close();
+    //         }
+    //         if(statement!=null){
+    //             statement.close();
+    //         }
+    //         if(rs!=null){
+    //             rs.close();
+    //         }
+    //     }
+    // }
     private static void setValue(PreparedStatement s,int index,int value) throws SQLException{
         if(value==-1){
-            s.setNull(index,Types.VARCHAR);
+            s.setNull(index,Types.INTEGER);
         }else{
             s.setInt(index,value);
         }
     }
     private static void setValue(PreparedStatement s,int index,String value) throws SQLException{
         if(value.length()==0){
-            s.setNull(index,Types.INTEGER);
+            s.setNull(index,Types.VARCHAR);
         }else{
             s.setString(index,value);
         }
