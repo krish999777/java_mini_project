@@ -41,3 +41,27 @@ public class StudentGUI extends JFrame implements ActionListener{
     }
 }
 
+class viewDetailsGUI extends JFrame implements ActionListener{
+    JLabel l1,l2;
+    viewDetailsGUI(){
+        setSize(500,500);
+        setLayout(new GridLayout());
+        setLocationRelativeTo(null);
+        l1=new JLabel("View Details");
+        l2=new JLabel("");
+        l2.setVisible(false);
+        try{
+            StudentProfileModel s=StudentProfile.getProfile();
+            System.out.println(s);
+        }catch(Exception e){
+            l2.setText(e.toString());
+            l2.setVisible(true);
+        }
+
+        setVisible(true);
+    }
+    public void actionPerformed(ActionEvent ae){
+
+    }
+}
+
