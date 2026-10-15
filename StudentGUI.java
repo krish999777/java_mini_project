@@ -45,7 +45,7 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
     JLabel l1,l2;
     JButton b1,b2;
     JTabbedPane pane;
-    JPanel header,footer,profile,skills;
+    JPanel header,footer,profile,skills,education,projects,internships,certifications,achievements,semesterMarks;
     ViewDetailsGUI(){
         setSize(500,500);
         setLayout(new BorderLayout());
@@ -68,34 +68,129 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
 
         pane=new JTabbedPane();
         profile=new JPanel(new GridLayout(0,2,10,10));
-        skills=new JPanel();
-
-
-
-
+        skills=new JPanel(new GridLayout(0,2,10,10));
+        education=new JPanel(new GridLayout(0,2,10,10));
+        projects=new JPanel(new GridLayout(0,2,10,10));
+        internships=new JPanel(new GridLayout(0,2,10,10));
+        certifications=new JPanel(new GridLayout(0,2,10,10));
+        achievements=new JPanel(new GridLayout(0,2,10,10));
+        semesterMarks=new JPanel(new GridLayout(0,2,10,10));
 
         try{
             StudentProfileModel s=StudentProfile.getProfile();
-            profile.add(new JLabel("Name"));
-            profile.add(new JLabel(s.fullName));
-            profile.add(new JLabel("Email"));
-            profile.add(new JLabel(s.email));
-            addProfileField(profile,s.phone,"Phone");
-            addProfileField(profile,s.college,"College");
-            addProfileField(profile,s.course,"Course");
-            addProfileField(profile,s.year,"Year");
-            addProfileField(profile,s.currentSemester,"Semester");
-            addProfileField(profile,s.bio,"Bio");
-            addProfileField(profile,s.githubUrl,"Github url");
-            addProfileField(profile,s.linkedinUrl,"Linkedin url");
-            
+            if(s==null){
+                l2.setText("Student profile does not exist");
+                l2.setVisible(true);
+            }else{
+                profile.add(new JLabel("Name"));
+                profile.add(new JLabel(s.fullName));
+                profile.add(new JLabel("Email"));
+                profile.add(new JLabel(s.email));
+                addProfileField(profile,s.phone,"Phone");
+                addProfileField(profile,s.college,"College");
+                addProfileField(profile,s.course,"Course");
+                addProfileField(profile,s.year,"Year");
+                addProfileField(profile,s.currentSemester,"Semester");
+                addProfileField(profile,s.bio,"Bio");
+                addProfileField(profile,s.githubUrl,"Github url");
+                addProfileField(profile,s.linkedinUrl,"Linkedin url");
+
+                if(!checkEmpty(s.skills,skills,"No skills added")){
+                    for(int i=0;i<s.skills.length;i++){
+                        addProfileField(skills,s.skills[i],"Skill "+(i+1));
+                    }
+                }
+
+                if(!checkEmpty(s.education,education,"No education details added")){
+                    for(int i=0;i<s.education.length;i++){
+                        EducationModel ed=s.education[i];
+                        if(s.education.length>1){
+                            education.add(new JLabel("--- Education "+(i+1)+" ---"));
+                            education.add(new JLabel(""));
+                        }
+                        addProfileField(education,ed.school,"School");
+                        addProfileField(education,ed.board,"Board");
+                        addProfileField(education,ed.startYear,"Start year");
+                        addProfileField(education,ed.endYear,"End year");
+                        addProfileField(education,ed.grade,"Grade");
+                    }
+                }
+
+                if(!checkEmpty(s.projects,projects,"No projects added")){
+                    for(int i=0;i<s.projects.length;i++){
+                        ProjectModel pr=s.projects[i];
+                        if(s.projects.length>1){
+                            projects.add(new JLabel("--- Project "+(i+1)+" ---"));
+                            projects.add(new JLabel(""));
+                        }
+                        addProfileField(projects,pr.title,"Title");
+                        addProfileField(projects,pr.description,"Description");
+                        addProfileField(projects,pr.githubUrl,"Github url");
+                        addProfileField(projects,pr.liveUrl,"Live url");
+                    }
+                }
+
+                if(!checkEmpty(s.internships,internships,"No internships added")){
+                    for(int i=0;i<s.internships.length;i++){
+                        InternshipModel in=s.internships[i];
+                        if(s.internships.length>1){
+                            internships.add(new JLabel("--- Internship "+(i+1)+" ---"));
+                            internships.add(new JLabel(""));
+                        }
+                        addProfileField(internships,in.company,"Company");
+                        addProfileField(internships,in.role,"Role");
+                        addProfileField(internships,in.description,"Description");
+                        addProfileField(internships,in.startDate,"Start date");
+                        addProfileField(internships,in.endDate,"End date");
+                    }
+                }
+
+                if(!checkEmpty(s.certifications,certifications,"No certifications added")){
+                    for(int i=0;i<s.certifications.length;i++){
+                        CertificationModel c=s.certifications[i];
+                        if(s.certifications.length>1){
+                            certifications.add(new JLabel("--- Certification "+(i+1)+" ---"));
+                            certifications.add(new JLabel(""));
+                        }
+                        addProfileField(certifications,c.name,"Name");
+                        addProfileField(certifications,c.issuingOrganization,"Organization");
+                        addProfileField(certifications,c.credentialId,"Credential ID");
+                        addProfileField(certifications,c.credentialUrl,"Credential url");
+                    }
+                }
+
+                if(!checkEmpty(s.achievements,achievements,"No achievements added")){
+                    for(int i=0;i<s.achievements.length;i++){
+                        AchievementModel a=s.achievements[i];
+                        if(s.achievements.length>1){
+                            achievements.add(new JLabel("--- Achievement "+(i+1)+" ---"));
+                            achievements.add(new JLabel(""));
+                        }
+                        addProfileField(achievements,a.title,"Title");
+                        addProfileField(achievements,a.description,"Description");
+                    }
+                }
+
+                if(!checkEmpty(s.semesterMarks,semesterMarks,"No semester marks added")){
+                    for(int i=0;i<s.semesterMarks.length;i++){
+                        SemesterMarkModel sm=s.semesterMarks[i];
+                        addProfileField(semesterMarks,sm.marks,"Semester "+sm.semester);
+                    }
+                }
+            }
         }catch(Exception e){
             l2.setText(e.toString());
             l2.setVisible(true);
         }
 
-        pane.addTab("Profile",profile);
-        pane.addTab("Skills",skills);
+        pane.addTab("Profile",new JScrollPane(profile));
+        pane.addTab("Skills",new JScrollPane(skills));
+        pane.addTab("Education",new JScrollPane(education));
+        pane.addTab("Projects",new JScrollPane(projects));
+        pane.addTab("Internships",new JScrollPane(internships));
+        pane.addTab("Certifications",new JScrollPane(certifications));
+        pane.addTab("Achievements",new JScrollPane(achievements));
+        pane.addTab("Semester Marks",new JScrollPane(semesterMarks));
 
         b1.addActionListener(this);
         b2.addActionListener(this);
@@ -115,16 +210,30 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
             dispose();
         }
     }
-    private void addProfileField(Container profile,String value,String field){
-        if(value!=null&&value.length()!=0){
-            profile.add(new JLabel(field));
-            profile.add(new JLabel(value));
+    private boolean checkEmpty(Object arr[],Container c,String msg){
+        if(arr==null||arr.length==0){
+            c.add(new JLabel(msg));
+            c.add(new JLabel(""));
+            return true;
+        }
+        return false;
+    }
+    private void addProfileField(Container c,String value,String field){
+        if(value!=null&&value.trim().length()!=0){
+            c.add(new JLabel(field));
+            c.add(new JLabel(value));
         }
     }
-    private void addProfileField(Container profile,int value,String field){
+    private void addProfileField(Container c,int value,String field){
         if(value!=-1){
-            profile.add(new JLabel(field));
-            profile.add(new JLabel(""+value));
+            c.add(new JLabel(field));
+            c.add(new JLabel(""+value));
+        }
+    }
+    private void addProfileField(Container c,double value,String field){
+        if(value>=0){
+            c.add(new JLabel(field));
+            c.add(new JLabel(""+value));
         }
     }
 }
