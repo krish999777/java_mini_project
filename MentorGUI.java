@@ -7,9 +7,12 @@ import data.*;
 public class MentorGUI extends JFrame implements ActionListener {
     JLabel l1,l2;
     JButton b1;
-    JPanel students[],header,center;
+    JPanel students[],header,center,top,searchPanel;
     JButton viewButtons[];
     StudentProfileModel p[];
+    JTextField tfName,tfCollege,tfCourse,tfYear,tfSkill;
+    JButton bSearch,bReset;
+
     MentorGUI(){
         setSize(500,500);
         setLocationRelativeTo(null);
@@ -23,11 +26,61 @@ public class MentorGUI extends JFrame implements ActionListener {
         header.add(l2);
         header.add(b1);
         b1.addActionListener(this);
-        add(header,BorderLayout.NORTH);
+
+        searchPanel=new JPanel(new GridLayout(0,4,5,5));
+        tfName=new JTextField();
+        tfCollege=new JTextField();
+        tfCourse=new JTextField();
+        tfYear=new JTextField();
+        tfSkill=new JTextField();
+        bSearch=new JButton("Search");
+        bReset=new JButton("Reset");
+        bSearch.addActionListener(this);
+        bReset.addActionListener(this);
+
+        searchPanel.add(new JLabel("Name"));
+        searchPanel.add(tfName);
+        searchPanel.add(new JLabel("College"));
+        searchPanel.add(tfCollege);
+        searchPanel.add(new JLabel("Course"));
+        searchPanel.add(tfCourse);
+        searchPanel.add(new JLabel("Year"));
+        searchPanel.add(tfYear);
+        searchPanel.add(new JLabel("Skill"));
+        searchPanel.add(tfSkill);
+        searchPanel.add(bSearch);
+        searchPanel.add(bReset);
+
+        top=new JPanel(new BorderLayout(5,5));
+        top.add(header,BorderLayout.NORTH);
+        top.add(searchPanel,BorderLayout.CENTER);
+        add(top,BorderLayout.NORTH);
+
         center=new JPanel(new GridLayout(0,3,10,10));
+        add(center,BorderLayout.CENTER);
 
         try{
             p=Mentor.getStudents();
+            loadStudents(p);
+        }catch(Exception e){
+            l2.setText(e.toString());
+            l2.setVisible(true);
+        }
+
+        setVisible(true);
+    }
+
+    private void loadStudents(StudentProfileModel p[]){
+        center.removeAll();
+        this.p=p;
+        if(p==null||p.length==0){
+            l2.setText("No students found");
+            l2.setVisible(true);
+            students=new JPanel[0];
+            viewButtons=new JButton[0];
+        }else{
+            l2.setText("");
+            l2.setVisible(false);
             students=new JPanel[p.length];
             viewButtons=new JButton[p.length];
             for(int i=0;i<p.length;i++){
@@ -51,25 +104,61 @@ public class MentorGUI extends JFrame implements ActionListener {
                 students[i].setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 center.add(students[i]);
             }
-            add(center,BorderLayout.CENTER);
-        }catch(Exception e){
-            l2.setText(e.toString());
-            l2.setVisible(true);
         }
-
-        setVisible(true);
+        center.revalidate();
+        center.repaint();
     }
+
     public void actionPerformed(ActionEvent ae){
         JButton source=(JButton)ae.getSource();
         if(source==b1){
             Session.logout();
             new LoginGUI();
             dispose();
+        }else if(source==bSearch){
+            try{
+                String name=tfName.getText().trim();
+                String college=tfCollege.getText().trim();
+                String course=tfCourse.getText().trim();
+                String yearStr=tfYear.getText().trim();
+                int year=-1;
+                if(yearStr.length()!=0){
+                    try{
+                        year=Integer.parseInt(yearStr);
+                    }catch(NumberFormatException ex){
+                        l2.setText("Year must be a number");
+                        l2.setVisible(true);
+                        return;
+                    }
+                }
+                String skill=tfSkill.getText().trim();
+                p=Mentor.getStudents(name,college,course,year,skill);
+                loadStudents(p);
+            }catch(Exception e){
+                l2.setText(e.toString());
+                l2.setVisible(true);
+            }
+        }else if(source==bReset){
+            tfName.setText("");
+            tfCollege.setText("");
+            tfCourse.setText("");
+            tfYear.setText("");
+            tfSkill.setText("");
+            try{
+                p=Mentor.getStudents();
+                loadStudents(p);
+            }catch(Exception e){
+                l2.setText(e.toString());
+                l2.setVisible(true);
+            }
         }else{
-            for(int i=0;i<viewButtons.length;i++){
-                if(source==viewButtons[i]){
-                    new StudentDetailGUI(p[i].id);
-                    dispose();
+            if(viewButtons!=null){
+                for(int i=0;i<viewButtons.length;i++){
+                    if(source==viewButtons[i]){
+                        new StudentDetailGUI(p[i].id);
+                        dispose();
+                        return;
+                    }
                 }
             }
         }
