@@ -47,7 +47,8 @@ public class LoginGUI extends JFrame implements ActionListener{
                     new MentorGUI();
                     dispose();
                 }else{
-
+                    new AdminGUI();
+                    dispose();
                 }
             }catch(Exception ex){
                 message.setText(ex.toString());
