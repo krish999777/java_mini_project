@@ -9,7 +9,6 @@ public class LoginGUI extends JFrame implements ActionListener{
     JTextField tf1,tf2;
     JButton b1,b2;
     LoginGUI(){
-        // setVisible(true);
         setSize(500,500);
         setLayout(new GridLayout(4,2,10,10));
         setLocationRelativeTo(null);
@@ -45,7 +44,8 @@ public class LoginGUI extends JFrame implements ActionListener{
                     new StudentGUI();
                     dispose();
                 }else if(r==Role.MENTOR){
-
+                    new MentorGUI();
+                    dispose();
                 }else{
 
                 }
