@@ -18,7 +18,7 @@ public class LoginGUI extends JFrame implements ActionListener{
     }
 
     public LoginGUI(){
-        setTitle("Student Profile Management System - Login");
+        setTitle("Login page");
         setSize(440, 380);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
@@ -30,7 +30,7 @@ public class LoginGUI extends JFrame implements ActionListener{
         header.setBackground(new Color(30, 41, 59));
         header.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        title = new JLabel("System Login", SwingConstants.CENTER);
+        title = new JLabel("Login page", SwingConstants.CENTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 22));
         title.setForeground(Color.WHITE);
         header.add(title, BorderLayout.CENTER);

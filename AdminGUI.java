@@ -5,16 +5,17 @@ import session.Session;
 import data.Role;
 
 public class AdminGUI extends JFrame implements ActionListener{
-    JLabel l1;
+    JLabel l1, lblMentor;
     JTextField tf1;
     JPasswordField tf2;
     JComboBox<Role> cbRole;
+    JComboBox<Admin.MentorUser> cbMentor;
     JButton b1,b2;
     JPanel header,footer,form;
 
     public AdminGUI(){
-        setTitle("Admin Dashboard");
-        setSize(500, 440);
+        setTitle("Admin Page");
+        setSize(520, 480);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -25,7 +26,7 @@ public class AdminGUI extends JFrame implements ActionListener{
         header.setBackground(new Color(30, 41, 59));
         header.setBorder(BorderFactory.createEmptyBorder(18, 20, 18, 20));
 
-        l1 = new JLabel("Admin Dashboard", SwingConstants.CENTER);
+        l1 = new JLabel("Admin Page", SwingConstants.CENTER);
         l1.setFont(new Font("SansSerif", Font.BOLD, 20));
         l1.setForeground(Color.WHITE);
         header.add(l1, BorderLayout.CENTER);
@@ -33,9 +34,9 @@ public class AdminGUI extends JFrame implements ActionListener{
         // Form in the center with card styling and padding
         JPanel formWrapper = new JPanel(new BorderLayout());
         formWrapper.setBackground(new Color(248, 250, 252));
-        formWrapper.setBorder(BorderFactory.createEmptyBorder(25, 40, 15, 40));
+        formWrapper.setBorder(BorderFactory.createEmptyBorder(20, 35, 10, 35));
 
-        form = new JPanel(new GridLayout(3, 2, 12, 16));
+        form = new JPanel(new GridLayout(0, 2, 12, 14));
         form.setBackground(Color.WHITE);
         form.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(226, 232, 240), 1),
@@ -63,12 +64,32 @@ public class AdminGUI extends JFrame implements ActionListener{
         lblRole.setFont(new Font("SansSerif", Font.BOLD, 13));
         lblRole.setForeground(new Color(30, 41, 59));
 
+        lblMentor = new JLabel("Mentor");
+        lblMentor.setFont(new Font("SansSerif", Font.BOLD, 13));
+        lblMentor.setForeground(new Color(30, 41, 59));
+
+        cbMentor = new JComboBox<>();
+        cbMentor.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        loadMentors();
+
+        cbRole.addItemListener(new ItemListener(){
+            public void itemStateChanged(ItemEvent ie){
+                if(ie.getStateChange() == ItemEvent.SELECTED){
+                    updateMentorVisibility();
+                }
+            }
+        });
+
         form.add(lblUser);
         form.add(tf1);
         form.add(lblPass);
         form.add(tf2);
         form.add(lblRole);
         form.add(cbRole);
+        form.add(lblMentor);
+        form.add(cbMentor);
+
+        updateMentorVisibility();
 
         formWrapper.add(form, BorderLayout.CENTER);
 
@@ -113,6 +134,26 @@ public class AdminGUI extends JFrame implements ActionListener{
         setVisible(true);
     }
 
+    private void loadMentors(){
+        cbMentor.removeAllItems();
+        try{
+            Admin.MentorUser mentors[] = Admin.getMentors();
+            for(Admin.MentorUser m : mentors){
+                cbMentor.addItem(m);
+            }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(this, "Failed to load mentors: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void updateMentorVisibility(){
+        boolean isStudent = cbRole.getSelectedItem() == Role.STUDENT;
+        lblMentor.setVisible(isStudent);
+        cbMentor.setVisible(isStudent);
+        form.revalidate();
+        form.repaint();
+    }
+
     public void actionPerformed(ActionEvent ae){
         JButton source = (JButton)ae.getSource();
         if(source == b1){
@@ -120,10 +161,24 @@ public class AdminGUI extends JFrame implements ActionListener{
                 String username = tf1.getText().trim();
                 String password = new String(tf2.getPassword()).trim();
                 Role role = (Role)cbRole.getSelectedItem();
-                Admin.createUser(role, username, password);
+
+                if(role == Role.STUDENT){
+                    Admin.MentorUser selectedMentor = (Admin.MentorUser)cbMentor.getSelectedItem();
+                    if(selectedMentor == null){
+                        JOptionPane.showMessageDialog(this, "Please select a mentor for the student", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    Admin.createUser(role, username, password, selectedMentor.id);
+                }else{
+                    Admin.createUser(role, username, password, null);
+                }
+
                 JOptionPane.showMessageDialog(this, "User created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 tf1.setText("");
                 tf2.setText("");
+                if(role == Role.MENTOR){
+                    loadMentors();
+                }
             }catch(Exception ex){
                 JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
             }

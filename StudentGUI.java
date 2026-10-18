@@ -18,7 +18,7 @@ public class StudentGUI extends JFrame implements ActionListener{
             System.out.println(e);
         }
 
-        setTitle("Student Dashboard");
+        setTitle("Student Page");
         setSize(480, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -30,7 +30,7 @@ public class StudentGUI extends JFrame implements ActionListener{
         header.setBackground(new Color(30, 41, 59));
         header.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel title = new JLabel("Student Dashboard", SwingConstants.CENTER);
+        JLabel title = new JLabel("Student Page", SwingConstants.CENTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 22));
         title.setForeground(Color.WHITE);
         header.add(title, BorderLayout.CENTER);
@@ -110,7 +110,7 @@ class CreateProfileGUI extends JFrame implements ActionListener{
     JPanel header,footer,form;
 
     public CreateProfileGUI(){
-        setTitle("Create Student Profile");
+        setTitle("Student Page");
         setSize(560, 640);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
@@ -122,7 +122,7 @@ class CreateProfileGUI extends JFrame implements ActionListener{
         header.setBackground(new Color(30, 41, 59));
         header.setBorder(BorderFactory.createEmptyBorder(18, 20, 18, 20));
 
-        l1 = new JLabel("Create Student Profile", SwingConstants.CENTER);
+        l1 = new JLabel("Student Page", SwingConstants.CENTER);
         l1.setFont(new Font("SansSerif", Font.BOLD, 20));
         l1.setForeground(Color.WHITE);
         header.add(l1, BorderLayout.CENTER);
@@ -241,11 +241,11 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
     JLabel l1;
     JButton b1,b2;
     JTabbedPane pane;
-    JPanel header,footer,profile,skills,education,projects,internships,certifications,achievements,semesterMarks;
+    JPanel header,footer,profile;
 
     public ViewDetailsGUI(){
-        setTitle("Student Profile - View Details");
-        setSize(720, 620);
+        setTitle("Student Page");
+        setSize(780, 620);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -256,7 +256,7 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
         header.setBackground(new Color(30, 41, 59));
         header.setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
 
-        l1 = new JLabel("My Profile Details", SwingConstants.CENTER);
+        l1 = new JLabel("Student Page", SwingConstants.CENTER);
         l1.setFont(new Font("SansSerif", Font.BOLD, 20));
         l1.setForeground(Color.WHITE);
         header.add(l1, BorderLayout.CENTER);
@@ -296,14 +296,17 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
         pane = new JTabbedPane();
         pane.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
-        profile = createTabPanel();
-        skills = createTabPanel();
-        education = createTabPanel();
-        projects = createTabPanel();
-        internships = createTabPanel();
-        certifications = createTabPanel();
-        achievements = createTabPanel();
-        semesterMarks = createTabPanel();
+        profile = new JPanel(new GridLayout(0, 2, 12, 12));
+        profile.setBackground(Color.WHITE);
+        profile.setBorder(BorderFactory.createEmptyBorder(16, 24, 16, 24));
+
+        JScrollPane skillsPane = null;
+        JScrollPane educationPane = null;
+        JScrollPane projectsPane = null;
+        JScrollPane internshipsPane = null;
+        JScrollPane certificationsPane = null;
+        JScrollPane achievementsPane = null;
+        JScrollPane semesterMarksPane = null;
 
         try{
             StudentProfileModel s = StudentProfile.getProfile();
@@ -337,101 +340,110 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
                 addProfileField(profile, s.githubUrl, "Github url");
                 addProfileField(profile, s.linkedinUrl, "Linkedin url");
 
-                if(!checkEmpty(s.skills, skills, "No skills added")){
-                    for(int i = 0; i < s.skills.length; i++){
-                        addProfileField(skills, s.skills[i], "Skill " + (i + 1));
+                // Skills table
+                java.util.List<Object[]> skillRows = new java.util.ArrayList<>();
+                if (s.skills != null) {
+                    for (int i = 0; i < s.skills.length; i++) {
+                        skillRows.add(new Object[]{i + 1, s.skills[i]});
                     }
                 }
+                skillsPane = createTableTab(new String[]{"#", "Skill Name"}, skillRows, "No skills added");
 
-                if(!checkEmpty(s.education, education, "No education details added")){
-                    for(int i = 0; i < s.education.length; i++){
-                        EducationModel ed = s.education[i];
-                        if(s.education.length > 1){
-                            education.add(createHeaderLabel("--- Education " + (i + 1) + " ---"));
-                            education.add(new JLabel(""));
-                        }
-                        addProfileField(education, ed.school, "School");
-                        addProfileField(education, ed.board, "Board");
-                        addProfileField(education, ed.startYear, "Start year");
-                        addProfileField(education, ed.endYear, "End year");
-                        addProfileField(education, ed.grade, "Grade");
+                // Education table
+                java.util.List<Object[]> edRows = new java.util.ArrayList<>();
+                if (s.education != null) {
+                    for (EducationModel ed : s.education) {
+                        edRows.add(new Object[]{
+                            ed.school == null ? "" : ed.school,
+                            ed.board == null ? "" : ed.board,
+                            ed.startYear == -1 || ed.startYear == 0 ? "" : ed.startYear,
+                            ed.endYear == -1 || ed.endYear == 0 ? "" : ed.endYear,
+                            ed.grade == null ? "" : ed.grade
+                        });
                     }
                 }
+                educationPane = createTableTab(new String[]{"School", "Board", "Start Year", "End Year", "Grade"}, edRows, "No education details added");
 
-                if(!checkEmpty(s.projects, projects, "No projects added")){
-                    for(int i = 0; i < s.projects.length; i++){
-                        ProjectModel pr = s.projects[i];
-                        if(s.projects.length > 1){
-                            projects.add(createHeaderLabel("--- Project " + (i + 1) + " ---"));
-                            projects.add(new JLabel(""));
-                        }
-                        addProfileField(projects, pr.title, "Title");
-                        addProfileField(projects, pr.description, "Description");
-                        addProfileField(projects, pr.githubUrl, "Github url");
-                        addProfileField(projects, pr.liveUrl, "Live url");
+                // Projects table
+                java.util.List<Object[]> projRows = new java.util.ArrayList<>();
+                if (s.projects != null) {
+                    for (ProjectModel pr : s.projects) {
+                        projRows.add(new Object[]{
+                            pr.title == null ? "" : pr.title,
+                            pr.description == null ? "" : pr.description,
+                            pr.githubUrl == null ? "" : pr.githubUrl,
+                            pr.liveUrl == null ? "" : pr.liveUrl
+                        });
                     }
                 }
+                projectsPane = createTableTab(new String[]{"Title", "Description", "GitHub URL", "Live URL"}, projRows, "No projects added");
 
-                if(!checkEmpty(s.internships, internships, "No internships added")){
-                    for(int i = 0; i < s.internships.length; i++){
-                        InternshipModel in = s.internships[i];
-                        if(s.internships.length > 1){
-                            internships.add(createHeaderLabel("--- Internship " + (i + 1) + " ---"));
-                            internships.add(new JLabel(""));
-                        }
-                        addProfileField(internships, in.company, "Company");
-                        addProfileField(internships, in.role, "Role");
-                        addProfileField(internships, in.description, "Description");
-                        addProfileField(internships, in.startDate, "Start date");
-                        addProfileField(internships, in.endDate, "End date");
+                // Internships table
+                java.util.List<Object[]> inRows = new java.util.ArrayList<>();
+                if (s.internships != null) {
+                    for (InternshipModel in : s.internships) {
+                        inRows.add(new Object[]{
+                            in.company == null ? "" : in.company,
+                            in.role == null ? "" : in.role,
+                            in.description == null ? "" : in.description,
+                            in.startDate == null ? "" : in.startDate,
+                            in.endDate == null ? "" : in.endDate
+                        });
                     }
                 }
+                internshipsPane = createTableTab(new String[]{"Company", "Role", "Description", "Start Date", "End Date"}, inRows, "No internships added");
 
-                if(!checkEmpty(s.certifications, certifications, "No certifications added")){
-                    for(int i = 0; i < s.certifications.length; i++){
-                        CertificationModel c = s.certifications[i];
-                        if(s.certifications.length > 1){
-                            certifications.add(createHeaderLabel("--- Certification " + (i + 1) + " ---"));
-                            certifications.add(new JLabel(""));
-                        }
-                        addProfileField(certifications, c.name, "Name");
-                        addProfileField(certifications, c.issuingOrganization, "Organization");
-                        addProfileField(certifications, c.credentialId, "Credential ID");
-                        addProfileField(certifications, c.credentialUrl, "Credential url");
+                // Certifications table
+                java.util.List<Object[]> certRows = new java.util.ArrayList<>();
+                if (s.certifications != null) {
+                    for (CertificationModel c : s.certifications) {
+                        certRows.add(new Object[]{
+                            c.name == null ? "" : c.name,
+                            c.issuingOrganization == null ? "" : c.issuingOrganization,
+                            c.credentialId == null ? "" : c.credentialId,
+                            c.credentialUrl == null ? "" : c.credentialUrl
+                        });
                     }
                 }
+                certificationsPane = createTableTab(new String[]{"Name", "Organization", "Credential ID", "Credential URL"}, certRows, "No certifications added");
 
-                if(!checkEmpty(s.achievements, achievements, "No achievements added")){
-                    for(int i = 0; i < s.achievements.length; i++){
-                        AchievementModel a = s.achievements[i];
-                        if(s.achievements.length > 1){
-                            achievements.add(createHeaderLabel("--- Achievement " + (i + 1) + " ---"));
-                            achievements.add(new JLabel(""));
-                        }
-                        addProfileField(achievements, a.title, "Title");
-                        addProfileField(achievements, a.description, "Description");
+                // Achievements table
+                java.util.List<Object[]> achRows = new java.util.ArrayList<>();
+                if (s.achievements != null) {
+                    for (AchievementModel a : s.achievements) {
+                        achRows.add(new Object[]{
+                            a.title == null ? "" : a.title,
+                            a.description == null ? "" : a.description
+                        });
                     }
                 }
+                achievementsPane = createTableTab(new String[]{"Title", "Description"}, achRows, "No achievements added");
 
-                if(!checkEmpty(s.semesterMarks, semesterMarks, "No semester marks added")){
-                    for(int i = 0; i < s.semesterMarks.length; i++){
-                        SemesterMarkModel sm = s.semesterMarks[i];
-                        addProfileField(semesterMarks, sm.marks, "Semester " + sm.semester);
+                // Semester Marks table
+                java.util.List<Object[]> semRows = new java.util.ArrayList<>();
+                if (s.semesterMarks != null) {
+                    for (SemesterMarkModel sm : s.semesterMarks) {
+                        semRows.add(new Object[]{"Semester " + sm.semester, sm.marks});
                     }
                 }
+                semesterMarksPane = createTableTab(new String[]{"Semester", "Marks"}, semRows, "No semester marks added");
             }
         }catch(Exception e){
             JOptionPane.showMessageDialog(this, e.toString(), "Error Loading Profile", JOptionPane.ERROR_MESSAGE);
         }
 
-        pane.addTab("Profile", wrapScroll(profile));
-        pane.addTab("Skills", wrapScroll(skills));
-        pane.addTab("Education", wrapScroll(education));
-        pane.addTab("Projects", wrapScroll(projects));
-        pane.addTab("Internships", wrapScroll(internships));
-        pane.addTab("Certifications", wrapScroll(certifications));
-        pane.addTab("Achievements", wrapScroll(achievements));
-        pane.addTab("Semester Marks", wrapScroll(semesterMarks));
+        JScrollPane profileScroll = new JScrollPane(profile);
+        profileScroll.setBorder(null);
+        profileScroll.getVerticalScrollBar().setUnitIncrement(16);
+
+        pane.addTab("Profile", profileScroll);
+        pane.addTab("Skills", skillsPane != null ? skillsPane : new JScrollPane());
+        pane.addTab("Education", educationPane != null ? educationPane : new JScrollPane());
+        pane.addTab("Projects", projectsPane != null ? projectsPane : new JScrollPane());
+        pane.addTab("Internships", internshipsPane != null ? internshipsPane : new JScrollPane());
+        pane.addTab("Certifications", certificationsPane != null ? certificationsPane : new JScrollPane());
+        pane.addTab("Achievements", achievementsPane != null ? achievementsPane : new JScrollPane());
+        pane.addTab("Semester Marks", semesterMarksPane != null ? semesterMarksPane : new JScrollPane());
 
         b1.addActionListener(this);
         b2.addActionListener(this);
@@ -442,11 +454,43 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
         setVisible(true);
     }
 
-    private JPanel createTabPanel(){
-        JPanel panel = new JPanel(new GridLayout(0, 2, 12, 12));
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(BorderFactory.createEmptyBorder(16, 24, 16, 24));
-        return panel;
+    private JScrollPane createTableTab(String[] headers, java.util.List<Object[]> rows, String emptyMsg) {
+        if (rows == null || rows.isEmpty()) {
+            JPanel p = new JPanel(new BorderLayout());
+            p.setBackground(Color.WHITE);
+            p.setBorder(BorderFactory.createEmptyBorder(30, 20, 30, 20));
+            JLabel empty = new JLabel(emptyMsg, SwingConstants.CENTER);
+            empty.setFont(new Font("SansSerif", Font.ITALIC, 14));
+            empty.setForeground(new Color(100, 116, 139));
+            p.add(empty, BorderLayout.CENTER);
+            return new JScrollPane(p);
+        }
+        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(headers, 0) {
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
+        };
+        for (Object[] row : rows) {
+            model.addRow(row);
+        }
+        JTable table = new JTable(model);
+        table.setRowHeight(28);
+        table.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        table.setGridColor(new Color(226, 232, 240));
+        table.setShowGrid(true);
+        table.setSelectionBackground(new Color(219, 234, 254));
+        table.setSelectionForeground(new Color(30, 58, 138));
+
+        javax.swing.table.JTableHeader th = table.getTableHeader();
+        th.setFont(new Font("SansSerif", Font.BOLD, 13));
+        th.setBackground(new Color(30, 41, 59));
+        th.setForeground(Color.WHITE);
+        th.setPreferredSize(new Dimension(th.getWidth(), 32));
+
+        JScrollPane sp = new JScrollPane(table);
+        sp.setBorder(BorderFactory.createLineBorder(new Color(203, 213, 225), 1));
+        sp.getViewport().setBackground(Color.WHITE);
+        return sp;
     }
 
     private JScrollPane wrapScroll(JPanel p){
@@ -594,7 +638,7 @@ class EditDetailsGUI extends JFrame implements ActionListener{
     }
 
     public EditDetailsGUI(int tabIndex){
-        setTitle("Student Profile - Edit Details");
+        setTitle("Student Page");
         setSize(740, 650);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
@@ -606,7 +650,7 @@ class EditDetailsGUI extends JFrame implements ActionListener{
         header.setBackground(new Color(30, 41, 59));
         header.setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
 
-        l1 = new JLabel("Edit Profile Details", SwingConstants.CENTER);
+        l1 = new JLabel("Student Page", SwingConstants.CENTER);
         l1.setFont(new Font("SansSerif", Font.BOLD, 20));
         l1.setForeground(Color.WHITE);
         header.add(l1, BorderLayout.CENTER);

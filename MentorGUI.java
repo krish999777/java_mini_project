@@ -1,21 +1,28 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
 import session.Session;
 import data.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MentorGUI extends JFrame implements ActionListener {
     JLabel l1;
     JButton b1;
-    JPanel students[],header,center,top,searchPanel;
-    JButton viewButtons[];
+    JPanel header, top, searchPanel, centerPanel, bottomPanel;
+    JTable studentTable;
+    DefaultTableModel tableModel;
+    JButton bViewStudent;
+    JLabel lblCount;
     StudentProfileModel p[];
-    JTextField tfName,tfCollege,tfCourse,tfYear,tfSkill;
-    JButton bSearch,bReset;
+    JTextField tfName, tfCollege, tfCourse, tfYear, tfSkill;
+    JButton bSearch, bReset;
 
-    public MentorGUI(){
+    public MentorGUI() {
         setTitle("Mentor Page");
-        setSize(920, 680);
+        setSize(960, 680);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -26,7 +33,7 @@ public class MentorGUI extends JFrame implements ActionListener {
         header.setBackground(new Color(30, 41, 59));
         header.setBorder(BorderFactory.createEmptyBorder(14, 20, 14, 20));
 
-        l1 = new JLabel("Mentor Portal - Students Directory");
+        l1 = new JLabel("Mentor Page");
         l1.setFont(new Font("SansSerif", Font.BOLD, 20));
         l1.setForeground(Color.WHITE);
         header.add(l1, BorderLayout.WEST);
@@ -45,7 +52,7 @@ public class MentorGUI extends JFrame implements ActionListener {
         b1.addActionListener(this);
         header.add(b1, BorderLayout.EAST);
 
-        // Search Panel with clean spacing
+        // Search Panel
         searchPanel = new JPanel(new GridLayout(0, 4, 10, 8));
         searchPanel.setBackground(new Color(241, 245, 249));
         searchPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -98,104 +105,153 @@ public class MentorGUI extends JFrame implements ActionListener {
         top.add(searchPanel, BorderLayout.CENTER);
         add(top, BorderLayout.NORTH);
 
-        center = new JPanel(new GridLayout(0, 3, 14, 14));
-        center.setBackground(new Color(248, 250, 252));
+        // Center Table Panel
+        centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setBackground(new Color(248, 250, 252));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
 
-        JScrollPane scrollPane = new JScrollPane(center);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        add(scrollPane, BorderLayout.CENTER);
+        String columnNames[] = {"ID", "Name", "Email", "Phone", "College", "Course", "Year", "Semester", "Bio"};
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            public boolean isCellEditable(int row, int col) {
+                return false;
+            }
+        };
 
-        try{
+        studentTable = new JTable(tableModel);
+        studentTable.setRowHeight(28);
+        studentTable.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        studentTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        studentTable.setGridColor(new Color(226, 232, 240));
+        studentTable.setSelectionBackground(new Color(219, 234, 254));
+        studentTable.setSelectionForeground(new Color(30, 58, 138));
+        studentTable.setShowGrid(true);
+
+        // Adjust column widths
+        studentTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        studentTable.getColumnModel().getColumn(1).setPreferredWidth(140);
+        studentTable.getColumnModel().getColumn(2).setPreferredWidth(160);
+        studentTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+        studentTable.getColumnModel().getColumn(4).setPreferredWidth(120);
+        studentTable.getColumnModel().getColumn(5).setPreferredWidth(100);
+        studentTable.getColumnModel().getColumn(6).setPreferredWidth(50);
+        studentTable.getColumnModel().getColumn(7).setPreferredWidth(60);
+        studentTable.getColumnModel().getColumn(8).setPreferredWidth(180);
+
+        JTableHeader th = studentTable.getTableHeader();
+        th.setFont(new Font("SansSerif", Font.BOLD, 13));
+        th.setBackground(new Color(30, 41, 59));
+        th.setForeground(Color.WHITE);
+        th.setPreferredSize(new Dimension(th.getWidth(), 32));
+
+        studentTable.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    viewSelectedStudent();
+                }
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(studentTable);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(203, 213, 225), 1));
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Bottom Action Bar
+        bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBackground(new Color(248, 250, 252));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 5, 0));
+
+        lblCount = new JLabel("Total Students: 0");
+        lblCount.setFont(new Font("SansSerif", Font.BOLD, 13));
+        lblCount.setForeground(new Color(71, 85, 105));
+
+        bViewStudent = new JButton("View Selected Student");
+        bViewStudent.setFont(new Font("SansSerif", Font.BOLD, 13));
+        bViewStudent.setBackground(new Color(37, 99, 235));
+        bViewStudent.setForeground(Color.WHITE);
+        bViewStudent.setFocusPainted(false);
+        bViewStudent.setOpaque(true);
+        bViewStudent.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        bViewStudent.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(29, 78, 216), 1),
+            BorderFactory.createEmptyBorder(8, 20, 8, 20)
+        ));
+        bViewStudent.addActionListener(this);
+
+        bottomPanel.add(lblCount, BorderLayout.WEST);
+        bottomPanel.add(bViewStudent, BorderLayout.EAST);
+        centerPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+        add(centerPanel, BorderLayout.CENTER);
+
+        try {
             p = Mentor.getStudents();
             loadStudents(p);
-        }catch(Exception e){
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.toString(), "Error Loading Students", JOptionPane.ERROR_MESSAGE);
         }
 
         setVisible(true);
     }
 
-    private JLabel createSearchLabel(String text){
+    private JLabel createSearchLabel(String text) {
         JLabel lbl = new JLabel(text);
         lbl.setFont(new Font("SansSerif", Font.BOLD, 12));
         lbl.setForeground(new Color(30, 41, 59));
         return lbl;
     }
 
-    private void loadStudents(StudentProfileModel p[]){
-        center.removeAll();
+    private void loadStudents(StudentProfileModel p[]) {
         this.p = p;
-        if(p == null || p.length == 0){
-            center.setLayout(new BorderLayout());
-            JLabel noStudents = new JLabel("No students found matching your criteria.", SwingConstants.CENTER);
-            noStudents.setFont(new Font("SansSerif", Font.PLAIN, 15));
-            noStudents.setForeground(new Color(100, 116, 139));
-            center.add(noStudents, BorderLayout.CENTER);
-            students = new JPanel[0];
-            viewButtons = new JButton[0];
-        }else{
-            center.setLayout(new GridLayout(0, 3, 14, 14));
-            students = new JPanel[p.length];
-            viewButtons = new JButton[p.length];
-            for(int i = 0; i < p.length; i++){
-                students[i] = new JPanel(new GridLayout(0, 2, 8, 8));
-                students[i].setBackground(Color.WHITE);
-                students[i].setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(203, 213, 225), 1),
-                    BorderFactory.createEmptyBorder(14, 14, 14, 14)
-                ));
-
-                addProfileField(students[i], p[i].id, "ID");
-                addProfileField(students[i], p[i].fullName, "Name");
-                addProfileField(students[i], p[i].email, "Email");
-                addProfileField(students[i], p[i].phone, "Phone");
-                addProfileField(students[i], p[i].college, "College");
-                addProfileField(students[i], p[i].course, "Course");
-                addProfileField(students[i], p[i].year, "Year");
-                addProfileField(students[i], p[i].currentSemester, "Semester");
-                addProfileField(students[i], p[i].bio, "Bio");
-                addProfileField(students[i], p[i].githubUrl, "Github url");
-                addProfileField(students[i], p[i].linkedinUrl, "Linkedin url");
-
-                viewButtons[i] = new JButton("View Student");
-                viewButtons[i].setFont(new Font("SansSerif", Font.BOLD, 12));
-                viewButtons[i].setBackground(new Color(37, 99, 235));
-                viewButtons[i].setForeground(Color.WHITE);
-                viewButtons[i].setFocusPainted(false);
-                viewButtons[i].setOpaque(true);
-                viewButtons[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
-                viewButtons[i].setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(29, 78, 216), 1),
-                    BorderFactory.createEmptyBorder(6, 12, 6, 12)
-                ));
-                viewButtons[i].addActionListener(this);
-                students[i].add(viewButtons[i]);
-                students[i].add(new JLabel(""));
-                center.add(students[i]);
+        tableModel.setRowCount(0);
+        if (p == null || p.length == 0) {
+            lblCount.setText("Total Students: 0");
+        } else {
+            for (StudentProfileModel s : p) {
+                tableModel.addRow(new Object[]{
+                    s.id,
+                    s.fullName == null ? "" : s.fullName,
+                    s.email == null ? "" : s.email,
+                    s.phone == null ? "" : s.phone,
+                    s.college == null ? "" : s.college,
+                    s.course == null ? "" : s.course,
+                    s.year == -1 || s.year == 0 ? "" : s.year,
+                    s.currentSemester <= 0 ? 1 : s.currentSemester,
+                    s.bio == null ? "" : s.bio
+                });
             }
+            lblCount.setText("Total Students: " + p.length);
         }
-        center.revalidate();
-        center.repaint();
     }
 
-    public void actionPerformed(ActionEvent ae){
-        JButton source = (JButton)ae.getSource();
-        if(source == b1){
+    private void viewSelectedStudent() {
+        int selectedRow = studentTable.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Please select a student from the table first.", "Selection Required", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        int studentId = (Integer) studentTable.getValueAt(selectedRow, 0);
+        new StudentDetailGUI(studentId);
+        dispose();
+    }
+
+    public void actionPerformed(ActionEvent ae) {
+        JButton source = (JButton) ae.getSource();
+        if (source == b1) {
             Session.logout();
             new LoginGUI();
             dispose();
-        }else if(source == bSearch){
-            try{
+        } else if (source == bSearch) {
+            try {
                 String name = tfName.getText().trim();
                 String college = tfCollege.getText().trim();
                 String course = tfCourse.getText().trim();
                 String yearStr = tfYear.getText().trim();
                 int year = -1;
-                if(yearStr.length() != 0){
-                    try{
+                if (yearStr.length() != 0) {
+                    try {
                         year = Integer.parseInt(yearStr);
-                    }catch(NumberFormatException ex){
+                    } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(this, "Year must be a number", "Validation Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
@@ -203,81 +259,43 @@ public class MentorGUI extends JFrame implements ActionListener {
                 String skill = tfSkill.getText().trim();
                 p = Mentor.getStudents(name, college, course, year, skill);
                 loadStudents(p);
-                if(p == null || p.length == 0){
+                if (p == null || p.length == 0) {
                     JOptionPane.showMessageDialog(this, "No students found matching your criteria.", "Search Results", JOptionPane.INFORMATION_MESSAGE);
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, e.toString(), "Search Error", JOptionPane.ERROR_MESSAGE);
             }
-        }else if(source == bReset){
+        } else if (source == bReset) {
             tfName.setText("");
             tfCollege.setText("");
             tfCourse.setText("");
             tfYear.setText("");
             tfSkill.setText("");
-            try{
+            try {
                 p = Mentor.getStudents();
                 loadStudents(p);
-            }catch(Exception e){
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }else{
-            if(viewButtons != null){
-                for(int i = 0; i < viewButtons.length; i++){
-                    if(source == viewButtons[i]){
-                        new StudentDetailGUI(p[i].id);
-                        dispose();
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    private void addProfileField(Container c, String value, String field){
-        if(value != null && value.trim().length() != 0){
-            JLabel lblField = new JLabel(field);
-            lblField.setFont(new Font("SansSerif", Font.BOLD, 12));
-            lblField.setForeground(new Color(30, 41, 59));
-
-            JLabel lblVal = new JLabel(value);
-            lblVal.setFont(new Font("SansSerif", Font.PLAIN, 12));
-            lblVal.setForeground(new Color(51, 65, 85));
-
-            c.add(lblField);
-            c.add(lblVal);
-        }
-    }
-
-    private void addProfileField(Container c, int value, String field){
-        if(value != -1 && value != 0){
-            JLabel lblField = new JLabel(field);
-            lblField.setFont(new Font("SansSerif", Font.BOLD, 12));
-            lblField.setForeground(new Color(30, 41, 59));
-
-            JLabel lblVal = new JLabel("" + value);
-            lblVal.setFont(new Font("SansSerif", Font.PLAIN, 12));
-            lblVal.setForeground(new Color(51, 65, 85));
-
-            c.add(lblField);
-            c.add(lblVal);
+        } else if (source == bViewStudent) {
+            viewSelectedStudent();
         }
     }
 }
 
-class StudentDetailGUI extends JFrame implements ActionListener{
+class StudentDetailGUI extends JFrame implements ActionListener {
     int studentId;
     JLabel l1;
-    JButton b1,b2;
+    JButton b1, b2;
     JTabbedPane pane;
-    JPanel header,footer,profile,skills,education,projects,internships,certifications,achievements,semesterMarks;
+    JPanel header, footer, profile;
 
-    StudentDetailGUI(){}
+    StudentDetailGUI() {}
 
-    StudentDetailGUI(int id){
+    StudentDetailGUI(int id) {
         this.studentId = id;
-        setTitle("Student Profile Details");
-        setSize(720, 620);
+        setTitle("Mentor Page");
+        setSize(780, 620);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -288,7 +306,7 @@ class StudentDetailGUI extends JFrame implements ActionListener{
         header.setBackground(new Color(30, 41, 59));
         header.setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
 
-        l1 = new JLabel("Student Profile Details", SwingConstants.CENTER);
+        l1 = new JLabel("Mentor Page", SwingConstants.CENTER);
         l1.setFont(new Font("SansSerif", Font.BOLD, 20));
         l1.setForeground(Color.WHITE);
         header.add(l1, BorderLayout.CENTER);
@@ -328,20 +346,23 @@ class StudentDetailGUI extends JFrame implements ActionListener{
         pane = new JTabbedPane();
         pane.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
-        profile = createTabPanel();
-        skills = createTabPanel();
-        education = createTabPanel();
-        projects = createTabPanel();
-        internships = createTabPanel();
-        certifications = createTabPanel();
-        achievements = createTabPanel();
-        semesterMarks = createTabPanel();
+        profile = new JPanel(new GridLayout(0, 2, 12, 12));
+        profile.setBackground(Color.WHITE);
+        profile.setBorder(BorderFactory.createEmptyBorder(16, 24, 16, 24));
 
-        try{
+        JScrollPane skillsPane = null;
+        JScrollPane educationPane = null;
+        JScrollPane projectsPane = null;
+        JScrollPane internshipsPane = null;
+        JScrollPane certificationsPane = null;
+        JScrollPane achievementsPane = null;
+        JScrollPane semesterMarksPane = null;
+
+        try {
             StudentProfileModel p = Mentor.getStudent(id);
-            if(p == null){
+            if (p == null) {
                 JOptionPane.showMessageDialog(this, "Student profile does not exist", "Profile Not Found", JOptionPane.ERROR_MESSAGE);
-            }else{
+            } else {
                 addProfileField(profile, p.fullName, "Name");
                 addProfileField(profile, p.email, "Email");
                 addProfileField(profile, p.phone, "Phone");
@@ -353,101 +374,110 @@ class StudentDetailGUI extends JFrame implements ActionListener{
                 addProfileField(profile, p.githubUrl, "Github url");
                 addProfileField(profile, p.linkedinUrl, "Linkedin url");
 
-                if(!checkEmpty(p.skills, skills, "No skills added")){
-                    for(int i = 0; i < p.skills.length; i++){
-                        addProfileField(skills, p.skills[i], "Skill " + (i + 1));
+                // Skills table
+                List<Object[]> skillRows = new ArrayList<>();
+                if (p.skills != null) {
+                    for (int i = 0; i < p.skills.length; i++) {
+                        skillRows.add(new Object[]{i + 1, p.skills[i]});
                     }
                 }
+                skillsPane = createTableTab(new String[]{"#", "Skill Name"}, skillRows, "No skills added");
 
-                if(!checkEmpty(p.education, education, "No education details added")){
-                    for(int i = 0; i < p.education.length; i++){
-                        EducationModel ed = p.education[i];
-                        if(p.education.length > 1){
-                            education.add(createHeaderLabel("--- Education " + (i + 1) + " ---"));
-                            education.add(new JLabel(""));
-                        }
-                        addProfileField(education, ed.school, "School");
-                        addProfileField(education, ed.board, "Board");
-                        addProfileField(education, ed.startYear, "Start year");
-                        addProfileField(education, ed.endYear, "End year");
-                        addProfileField(education, ed.grade, "Grade");
+                // Education table
+                List<Object[]> edRows = new ArrayList<>();
+                if (p.education != null) {
+                    for (EducationModel ed : p.education) {
+                        edRows.add(new Object[]{
+                            ed.school == null ? "" : ed.school,
+                            ed.board == null ? "" : ed.board,
+                            ed.startYear == -1 || ed.startYear == 0 ? "" : ed.startYear,
+                            ed.endYear == -1 || ed.endYear == 0 ? "" : ed.endYear,
+                            ed.grade == null ? "" : ed.grade
+                        });
                     }
                 }
+                educationPane = createTableTab(new String[]{"School", "Board", "Start Year", "End Year", "Grade"}, edRows, "No education details added");
 
-                if(!checkEmpty(p.projects, projects, "No projects added")){
-                    for(int i = 0; i < p.projects.length; i++){
-                        ProjectModel pr = p.projects[i];
-                        if(p.projects.length > 1){
-                            projects.add(createHeaderLabel("--- Project " + (i + 1) + " ---"));
-                            projects.add(new JLabel(""));
-                        }
-                        addProfileField(projects, pr.title, "Title");
-                        addProfileField(projects, pr.description, "Description");
-                        addProfileField(projects, pr.githubUrl, "Github url");
-                        addProfileField(projects, pr.liveUrl, "Live url");
+                // Projects table
+                List<Object[]> projRows = new ArrayList<>();
+                if (p.projects != null) {
+                    for (ProjectModel pr : p.projects) {
+                        projRows.add(new Object[]{
+                            pr.title == null ? "" : pr.title,
+                            pr.description == null ? "" : pr.description,
+                            pr.githubUrl == null ? "" : pr.githubUrl,
+                            pr.liveUrl == null ? "" : pr.liveUrl
+                        });
                     }
                 }
+                projectsPane = createTableTab(new String[]{"Title", "Description", "GitHub URL", "Live URL"}, projRows, "No projects added");
 
-                if(!checkEmpty(p.internships, internships, "No internships added")){
-                    for(int i = 0; i < p.internships.length; i++){
-                        InternshipModel in = p.internships[i];
-                        if(p.internships.length > 1){
-                            internships.add(createHeaderLabel("--- Internship " + (i + 1) + " ---"));
-                            internships.add(new JLabel(""));
-                        }
-                        addProfileField(internships, in.company, "Company");
-                        addProfileField(internships, in.role, "Role");
-                        addProfileField(internships, in.description, "Description");
-                        addProfileField(internships, in.startDate, "Start date");
-                        addProfileField(internships, in.endDate, "End date");
+                // Internships table
+                List<Object[]> inRows = new ArrayList<>();
+                if (p.internships != null) {
+                    for (InternshipModel in : p.internships) {
+                        inRows.add(new Object[]{
+                            in.company == null ? "" : in.company,
+                            in.role == null ? "" : in.role,
+                            in.description == null ? "" : in.description,
+                            in.startDate == null ? "" : in.startDate,
+                            in.endDate == null ? "" : in.endDate
+                        });
                     }
                 }
+                internshipsPane = createTableTab(new String[]{"Company", "Role", "Description", "Start Date", "End Date"}, inRows, "No internships added");
 
-                if(!checkEmpty(p.certifications, certifications, "No certifications added")){
-                    for(int i = 0; i < p.certifications.length; i++){
-                        CertificationModel c = p.certifications[i];
-                        if(p.certifications.length > 1){
-                            certifications.add(createHeaderLabel("--- Certification " + (i + 1) + " ---"));
-                            certifications.add(new JLabel(""));
-                        }
-                        addProfileField(certifications, c.name, "Name");
-                        addProfileField(certifications, c.issuingOrganization, "Organization");
-                        addProfileField(certifications, c.credentialId, "Credential ID");
-                        addProfileField(certifications, c.credentialUrl, "Credential url");
+                // Certifications table
+                List<Object[]> certRows = new ArrayList<>();
+                if (p.certifications != null) {
+                    for (CertificationModel c : p.certifications) {
+                        certRows.add(new Object[]{
+                            c.name == null ? "" : c.name,
+                            c.issuingOrganization == null ? "" : c.issuingOrganization,
+                            c.credentialId == null ? "" : c.credentialId,
+                            c.credentialUrl == null ? "" : c.credentialUrl
+                        });
                     }
                 }
+                certificationsPane = createTableTab(new String[]{"Name", "Organization", "Credential ID", "Credential URL"}, certRows, "No certifications added");
 
-                if(!checkEmpty(p.achievements, achievements, "No achievements added")){
-                    for(int i = 0; i < p.achievements.length; i++){
-                        AchievementModel a = p.achievements[i];
-                        if(p.achievements.length > 1){
-                            achievements.add(createHeaderLabel("--- Achievement " + (i + 1) + " ---"));
-                            achievements.add(new JLabel(""));
-                        }
-                        addProfileField(achievements, a.title, "Title");
-                        addProfileField(achievements, a.description, "Description");
+                // Achievements table
+                List<Object[]> achRows = new ArrayList<>();
+                if (p.achievements != null) {
+                    for (AchievementModel a : p.achievements) {
+                        achRows.add(new Object[]{
+                            a.title == null ? "" : a.title,
+                            a.description == null ? "" : a.description
+                        });
                     }
                 }
+                achievementsPane = createTableTab(new String[]{"Title", "Description"}, achRows, "No achievements added");
 
-                if(!checkEmpty(p.semesterMarks, semesterMarks, "No semester marks added")){
-                    for(int i = 0; i < p.semesterMarks.length; i++){
-                        SemesterMarkModel sm = p.semesterMarks[i];
-                        addProfileField(semesterMarks, sm.marks, "Semester " + sm.semester);
+                // Semester Marks table
+                List<Object[]> semRows = new ArrayList<>();
+                if (p.semesterMarks != null) {
+                    for (SemesterMarkModel sm : p.semesterMarks) {
+                        semRows.add(new Object[]{"Semester " + sm.semester, sm.marks});
                     }
                 }
+                semesterMarksPane = createTableTab(new String[]{"Semester", "Marks"}, semRows, "No semester marks added");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.toString(), "Error Loading Profile", JOptionPane.ERROR_MESSAGE);
         }
 
-        pane.addTab("Profile", wrapScroll(profile));
-        pane.addTab("Skills", wrapScroll(skills));
-        pane.addTab("Education", wrapScroll(education));
-        pane.addTab("Projects", wrapScroll(projects));
-        pane.addTab("Internships", wrapScroll(internships));
-        pane.addTab("Certifications", wrapScroll(certifications));
-        pane.addTab("Achievements", wrapScroll(achievements));
-        pane.addTab("Semester Marks", wrapScroll(semesterMarks));
+        JScrollPane profileScroll = new JScrollPane(profile);
+        profileScroll.setBorder(null);
+        profileScroll.getVerticalScrollBar().setUnitIncrement(16);
+
+        pane.addTab("Profile", profileScroll);
+        pane.addTab("Skills", skillsPane != null ? skillsPane : new JScrollPane());
+        pane.addTab("Education", educationPane != null ? educationPane : new JScrollPane());
+        pane.addTab("Projects", projectsPane != null ? projectsPane : new JScrollPane());
+        pane.addTab("Internships", internshipsPane != null ? internshipsPane : new JScrollPane());
+        pane.addTab("Certifications", certificationsPane != null ? certificationsPane : new JScrollPane());
+        pane.addTab("Achievements", achievementsPane != null ? achievementsPane : new JScrollPane());
+        pane.addTab("Semester Marks", semesterMarksPane != null ? semesterMarksPane : new JScrollPane());
 
         b1.addActionListener(this);
         b2.addActionListener(this);
@@ -458,55 +488,61 @@ class StudentDetailGUI extends JFrame implements ActionListener{
         setVisible(true);
     }
 
-    private JPanel createTabPanel(){
-        JPanel panel = new JPanel(new GridLayout(0, 2, 12, 12));
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(BorderFactory.createEmptyBorder(16, 24, 16, 24));
-        return panel;
-    }
+    private JScrollPane createTableTab(String[] headers, List<Object[]> rows, String emptyMsg) {
+        if (rows == null || rows.isEmpty()) {
+            JPanel p = new JPanel(new BorderLayout());
+            p.setBackground(Color.WHITE);
+            p.setBorder(BorderFactory.createEmptyBorder(30, 20, 30, 20));
+            JLabel empty = new JLabel(emptyMsg, SwingConstants.CENTER);
+            empty.setFont(new Font("SansSerif", Font.ITALIC, 14));
+            empty.setForeground(new Color(100, 116, 139));
+            p.add(empty, BorderLayout.CENTER);
+            return new JScrollPane(p);
+        }
+        DefaultTableModel model = new DefaultTableModel(headers, 0) {
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
+        };
+        for (Object[] row : rows) {
+            model.addRow(row);
+        }
+        JTable table = new JTable(model);
+        table.setRowHeight(28);
+        table.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        table.setGridColor(new Color(226, 232, 240));
+        table.setShowGrid(true);
+        table.setSelectionBackground(new Color(219, 234, 254));
+        table.setSelectionForeground(new Color(30, 58, 138));
 
-    private JScrollPane wrapScroll(JPanel p){
-        JScrollPane sp = new JScrollPane(p);
-        sp.setBorder(null);
-        sp.getVerticalScrollBar().setUnitIncrement(16);
+        JTableHeader th = table.getTableHeader();
+        th.setFont(new Font("SansSerif", Font.BOLD, 13));
+        th.setBackground(new Color(30, 41, 59));
+        th.setForeground(Color.WHITE);
+        th.setPreferredSize(new Dimension(th.getWidth(), 32));
+
+        JScrollPane sp = new JScrollPane(table);
+        sp.setBorder(BorderFactory.createLineBorder(new Color(203, 213, 225), 1));
+        sp.getViewport().setBackground(Color.WHITE);
         return sp;
     }
 
-    private JLabel createHeaderLabel(String text){
-        JLabel lbl = new JLabel(text);
-        lbl.setFont(new Font("SansSerif", Font.BOLD, 13));
-        lbl.setForeground(new Color(37, 99, 235));
-        return lbl;
-    }
-
-    public void actionPerformed(ActionEvent ae){
-        if(ae.getSource() == b1){
-            try{
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == b1) {
+            try {
                 Mentor.GenerateResume(studentId);
                 JOptionPane.showMessageDialog(this, "Resume generated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            }catch(Exception e){
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }else{
+        } else {
             new MentorGUI();
             dispose();
         }
     }
 
-    private boolean checkEmpty(Object arr[], Container c, String msg){
-        if(arr == null || arr.length == 0){
-            JLabel empty = new JLabel(msg);
-            empty.setFont(new Font("SansSerif", Font.ITALIC, 13));
-            empty.setForeground(new Color(100, 116, 139));
-            c.add(empty);
-            c.add(new JLabel(""));
-            return true;
-        }
-        return false;
-    }
-
-    private void addProfileField(Container c, String value, String field){
-        if(value != null && value.trim().length() != 0){
+    private void addProfileField(Container c, String value, String field) {
+        if (value != null && value.trim().length() != 0) {
             JLabel lblField = new JLabel(field);
             lblField.setFont(new Font("SansSerif", Font.BOLD, 13));
             lblField.setForeground(new Color(30, 41, 59));
@@ -520,23 +556,8 @@ class StudentDetailGUI extends JFrame implements ActionListener{
         }
     }
 
-    private void addProfileField(Container c, int value, String field){
-        if(value != -1){
-            JLabel lblField = new JLabel(field);
-            lblField.setFont(new Font("SansSerif", Font.BOLD, 13));
-            lblField.setForeground(new Color(30, 41, 59));
-
-            JLabel lblVal = new JLabel("" + value);
-            lblVal.setFont(new Font("SansSerif", Font.PLAIN, 13));
-            lblVal.setForeground(new Color(51, 65, 85));
-
-            c.add(lblField);
-            c.add(lblVal);
-        }
-    }
-
-    private void addProfileField(Container c, double value, String field){
-        if(value >= 0){
+    private void addProfileField(Container c, int value, String field) {
+        if (value != -1) {
             JLabel lblField = new JLabel(field);
             lblField.setFont(new Font("SansSerif", Font.BOLD, 13));
             lblField.setForeground(new Color(30, 41, 59));

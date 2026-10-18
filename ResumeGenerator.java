@@ -97,6 +97,19 @@ public class ResumeGenerator {
                 }
             }
 
+            if(p.semesterMarks!=null && p.semesterMarks.length!=0){
+                y=drawSectionHeader(cs,fontBold,"SEMESTER MARKS",x,y,width);
+                StringBuilder sb = new StringBuilder();
+                for(int i=0;i<p.semesterMarks.length;i++){
+                    SemesterMarkModel sm=p.semesterMarks[i];
+                    if(sb.length() > 0){
+                        sb.append("   |   ");
+                    }
+                    sb.append("Semester ").append(sm.semester).append(": ").append(sm.marks);
+                }
+                y=drawWrappedText(cs,fontRegular,9,sb.toString(),x,y,width,12);
+            }
+
             if(p.internships!=null && p.internships.length!=0){
                 y=drawSectionHeader(cs,fontBold,"EXPERIENCE",x,y,width);
                 for(int i=0;i<p.internships.length;i++){
