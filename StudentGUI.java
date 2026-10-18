@@ -493,19 +493,19 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
         return sp;
     }
 
-    private JScrollPane wrapScroll(JPanel p){
-        JScrollPane sp = new JScrollPane(p);
-        sp.setBorder(null);
-        sp.getVerticalScrollBar().setUnitIncrement(16);
-        return sp;
-    }
+    // private JScrollPane wrapScroll(JPanel p){
+    //     JScrollPane sp = new JScrollPane(p);
+    //     sp.setBorder(null);
+    //     sp.getVerticalScrollBar().setUnitIncrement(16);
+    //     return sp;
+    // }
 
-    private JLabel createHeaderLabel(String text){
-        JLabel lbl = new JLabel(text);
-        lbl.setFont(new Font("SansSerif", Font.BOLD, 13));
-        lbl.setForeground(new Color(37, 99, 235));
-        return lbl;
-    }
+    // private JLabel createHeaderLabel(String text){
+    //     JLabel lbl = new JLabel(text);
+    //     lbl.setFont(new Font("SansSerif", Font.BOLD, 13));
+    //     lbl.setForeground(new Color(37, 99, 235));
+    //     return lbl;
+    // }
 
     public void actionPerformed(ActionEvent ae){
         if(ae.getSource() == b1){
@@ -521,17 +521,17 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
         }
     }
 
-    private boolean checkEmpty(Object arr[], Container c, String msg){
-        if(arr == null || arr.length == 0){
-            JLabel empty = new JLabel(msg);
-            empty.setFont(new Font("SansSerif", Font.ITALIC, 13));
-            empty.setForeground(new Color(100, 116, 139));
-            c.add(empty);
-            c.add(new JLabel(""));
-            return true;
-        }
-        return false;
-    }
+    // private boolean checkEmpty(Object arr[], Container c, String msg){
+    //     if(arr == null || arr.length == 0){
+    //         JLabel empty = new JLabel(msg);
+    //         empty.setFont(new Font("SansSerif", Font.ITALIC, 13));
+    //         empty.setForeground(new Color(100, 116, 139));
+    //         c.add(empty);
+    //         c.add(new JLabel(""));
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     private void addProfileField(Container c, String value, String field){
         if(value != null && value.trim().length() != 0){
@@ -563,20 +563,20 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
         }
     }
 
-    private void addProfileField(Container c, double value, String field){
-        if(value >= 0){
-            JLabel lblField = new JLabel(field);
-            lblField.setFont(new Font("SansSerif", Font.BOLD, 13));
-            lblField.setForeground(new Color(30, 41, 59));
+//     private void addProfileField(Container c, double value, String field){
+//         if(value >= 0){
+//             JLabel lblField = new JLabel(field);
+//             lblField.setFont(new Font("SansSerif", Font.BOLD, 13));
+//             lblField.setForeground(new Color(30, 41, 59));
 
-            JLabel lblVal = new JLabel("" + value);
-            lblVal.setFont(new Font("SansSerif", Font.PLAIN, 13));
-            lblVal.setForeground(new Color(51, 65, 85));
+//             JLabel lblVal = new JLabel("" + value);
+//             lblVal.setFont(new Font("SansSerif", Font.PLAIN, 13));
+//             lblVal.setForeground(new Color(51, 65, 85));
 
-            c.add(lblField);
-            c.add(lblVal);
-        }
-    }
+//             c.add(lblField);
+//             c.add(lblVal);
+//         }
+//     }
 }
 
 class EditDetailsGUI extends JFrame implements ActionListener{
