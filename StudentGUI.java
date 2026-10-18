@@ -106,12 +106,14 @@ public class StudentGUI extends JFrame implements ActionListener{
 class CreateProfileGUI extends JFrame implements ActionListener{
     JLabel l1;
     JTextField tf1,tf2,tf3,tf4,tf5,tf6,tf7,tf8,tf9;
+    JTextField tfHobbies,tfDob,tfFatherName,tfFatherPhone,tfFatherEmail,tfFatherOccupation;
+    JTextField tfMotherName,tfMotherPhone,tfMotherEmail,tfMotherOccupation;
     JButton b1,b2;
     JPanel header,footer,form;
 
     public CreateProfileGUI(){
         setTitle("Student Page");
-        setSize(560, 640);
+        setSize(580, 700);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -172,6 +174,16 @@ class CreateProfileGUI extends JFrame implements ActionListener{
         tf7 = addField(form, "Bio");
         tf8 = addField(form, "Github url");
         tf9 = addField(form, "Linkedin url");
+        tfHobbies = addField(form, "Hobbies");
+        tfDob = addField(form, "Date of birth");
+        tfFatherName = addField(form, "Name of father");
+        tfFatherPhone = addField(form, "Father's mobile number");
+        tfFatherEmail = addField(form, "Father's email ID");
+        tfFatherOccupation = addField(form, "Father's occupation");
+        tfMotherName = addField(form, "Name of mother");
+        tfMotherPhone = addField(form, "Mother's mobile number");
+        tfMotherEmail = addField(form, "Mother's email ID");
+        tfMotherOccupation = addField(form, "Mother's occupation");
 
         b1.addActionListener(this);
         b2.addActionListener(this);
@@ -209,8 +221,20 @@ class CreateProfileGUI extends JFrame implements ActionListener{
                 String bio = tf7.getText().trim();
                 String githubUrl = tf8.getText().trim();
                 String linkedinUrl = tf9.getText().trim();
+                String hobbies = tfHobbies.getText().trim();
+                String dob = tfDob.getText().trim();
+                String fatherName = tfFatherName.getText().trim();
+                String fatherPhone = tfFatherPhone.getText().trim();
+                String fatherEmail = tfFatherEmail.getText().trim();
+                String fatherOccupation = tfFatherOccupation.getText().trim();
+                String motherName = tfMotherName.getText().trim();
+                String motherPhone = tfMotherPhone.getText().trim();
+                String motherEmail = tfMotherEmail.getText().trim();
+                String motherOccupation = tfMotherOccupation.getText().trim();
 
-                StudentProfile.createProfile(fullName, email, phone, college, course, year, bio, githubUrl, linkedinUrl);
+                StudentProfile.createProfile(fullName, email, phone, college, course, year, bio, githubUrl, linkedinUrl,
+                        hobbies, dob, fatherName, fatherPhone, fatherEmail, fatherOccupation,
+                        motherName, motherPhone, motherEmail, motherOccupation);
                 JOptionPane.showMessageDialog(this, "Profile created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 new StudentGUI();
                 dispose();
@@ -339,6 +363,16 @@ class ViewDetailsGUI extends JFrame implements ActionListener{
                 addProfileField(profile, s.bio, "Bio");
                 addProfileField(profile, s.githubUrl, "Github url");
                 addProfileField(profile, s.linkedinUrl, "Linkedin url");
+                addProfileField(profile, s.dob, "Date of birth");
+                addProfileField(profile, s.hobbies, "Hobbies");
+                addProfileField(profile, s.fatherName, "Name of father");
+                addProfileField(profile, s.fatherPhone, "Father's mobile number");
+                addProfileField(profile, s.fatherEmail, "Father's email ID");
+                addProfileField(profile, s.fatherOccupation, "Father's occupation");
+                addProfileField(profile, s.motherName, "Name of mother");
+                addProfileField(profile, s.motherPhone, "Mother's mobile number");
+                addProfileField(profile, s.motherEmail, "Mother's email ID");
+                addProfileField(profile, s.motherOccupation, "Mother's occupation");
 
                 // Skills table
                 java.util.List<Object[]> skillRows = new java.util.ArrayList<>();
@@ -589,6 +623,8 @@ class EditDetailsGUI extends JFrame implements ActionListener{
     // Profile
     JPanel profile;
     JTextField tf1,tf2,tf3,tf4,tf5,tf6,tf7,tf8,tf9,tf10;
+    JTextField tfHobbies,tfDob,tfFatherName,tfFatherPhone,tfFatherEmail,tfFatherOccupation;
+    JTextField tfMotherName,tfMotherPhone,tfMotherEmail,tfMotherOccupation;
     JButton bSaveProfile,bCreateProfile;
 
     // Skills
@@ -700,6 +736,16 @@ class EditDetailsGUI extends JFrame implements ActionListener{
                 tf8 = addEditField(profile, s.bio, "Bio");
                 tf9 = addEditField(profile, s.githubUrl, "Github url");
                 tf10 = addEditField(profile, s.linkedinUrl, "Linkedin url");
+                tfDob = addEditField(profile, s.dob, "Date of birth");
+                tfHobbies = addEditField(profile, s.hobbies, "Hobbies");
+                tfFatherName = addEditField(profile, s.fatherName, "Name of father");
+                tfFatherPhone = addEditField(profile, s.fatherPhone, "Father's mobile number");
+                tfFatherEmail = addEditField(profile, s.fatherEmail, "Father's email ID");
+                tfFatherOccupation = addEditField(profile, s.fatherOccupation, "Father's occupation");
+                tfMotherName = addEditField(profile, s.motherName, "Name of mother");
+                tfMotherPhone = addEditField(profile, s.motherPhone, "Mother's mobile number");
+                tfMotherEmail = addEditField(profile, s.motherEmail, "Mother's email ID");
+                tfMotherOccupation = addEditField(profile, s.motherOccupation, "Mother's occupation");
 
                 bSaveProfile = new JButton("Save Profile");
                 styleBtn(bSaveProfile, new Color(37, 99, 235));
@@ -1184,8 +1230,22 @@ class EditDetailsGUI extends JFrame implements ActionListener{
                 String bio = tf8.getText();
                 String githubUrl = tf9.getText();
                 String linkedinUrl = tf10.getText();
-                StudentProfile.updateProfile(fullName, email, phone, college, course, year, sem, bio, githubUrl, linkedinUrl);
+                String dob = tfDob.getText();
+                String hobbies = tfHobbies.getText();
+                String fatherName = tfFatherName.getText();
+                String fatherPhone = tfFatherPhone.getText();
+                String fatherEmail = tfFatherEmail.getText();
+                String fatherOccupation = tfFatherOccupation.getText();
+                String motherName = tfMotherName.getText();
+                String motherPhone = tfMotherPhone.getText();
+                String motherEmail = tfMotherEmail.getText();
+                String motherOccupation = tfMotherOccupation.getText();
+                StudentProfile.updateProfile(fullName, email, phone, college, course, year, sem, bio, githubUrl, linkedinUrl,
+                        hobbies, dob, fatherName, fatherPhone, fatherEmail, fatherOccupation,
+                        motherName, motherPhone, motherEmail, motherOccupation);
                 JOptionPane.showMessageDialog(this, "Profile updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                new EditDetailsGUI(0);
+                dispose();
             }else if(src == bAddSkill){
                 String sk = tfNewSkill.getText().trim();
                 if(sk.length() == 0){

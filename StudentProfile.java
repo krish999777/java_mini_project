@@ -4,7 +4,9 @@ import db.DBConnection;
 import data.*;
 import myExceptions.*;
 public class StudentProfile {
-    public static void createProfile(String fullName,String email,String phone,String college,String course,int year,String bio,String githubUrl,String linkedinUrl) throws RoleException,SQLException,MissingFieldException{
+    public static void createProfile(String fullName,String email,String phone,String college,String course,int year,String bio,String githubUrl,String linkedinUrl,
+            String hobbies, String dob, String fatherName, String fatherPhone, String fatherEmail, String fatherOccupation,
+            String motherName, String motherPhone, String motherEmail, String motherOccupation) throws RoleException,SQLException,MissingFieldException{
         Role role=Session.getRole();
         int userId=Session.getId();
         fullName=fullName==null?"":fullName.trim();
@@ -15,6 +17,16 @@ public class StudentProfile {
         bio=bio==null?"":bio.trim();
         githubUrl=githubUrl==null?"":githubUrl.trim();
         linkedinUrl=linkedinUrl==null?"":linkedinUrl.trim();
+        hobbies=hobbies==null?"":hobbies.trim();
+        dob=dob==null?"":dob.trim();
+        fatherName=fatherName==null?"":fatherName.trim();
+        fatherPhone=fatherPhone==null?"":fatherPhone.trim();
+        fatherEmail=fatherEmail==null?"":fatherEmail.trim();
+        fatherOccupation=fatherOccupation==null?"":fatherOccupation.trim();
+        motherName=motherName==null?"":motherName.trim();
+        motherPhone=motherPhone==null?"":motherPhone.trim();
+        motherEmail=motherEmail==null?"":motherEmail.trim();
+        motherOccupation=motherOccupation==null?"":motherOccupation.trim();
         if(fullName.length()==0){
             throw new MissingFieldException("fullName");
         }
@@ -28,8 +40,8 @@ public class StudentProfile {
         PreparedStatement statement=null;
         try{
             connection=DBConnection.getConnection();
-            String fields[]=new String[12];
-            String values[]=new String[12];
+            String fields[]=new String[25];
+            String values[]=new String[25];
             fields[0]="user_id";
             values[0]="_"+userId;
             fields[1]="full_name";
@@ -72,6 +84,56 @@ public class StudentProfile {
                 values[cur]=linkedinUrl;
                 cur++;
             }
+            if(hobbies.length()!=0){
+                fields[cur]="hobbies";
+                values[cur]=hobbies;
+                cur++;
+            }
+            if(dob.length()!=0){
+                fields[cur]="dob";
+                values[cur]=dob;
+                cur++;
+            }
+            if(fatherName.length()!=0){
+                fields[cur]="father_name";
+                values[cur]=fatherName;
+                cur++;
+            }
+            if(fatherPhone.length()!=0){
+                fields[cur]="father_phone";
+                values[cur]=fatherPhone;
+                cur++;
+            }
+            if(fatherEmail.length()!=0){
+                fields[cur]="father_email";
+                values[cur]=fatherEmail;
+                cur++;
+            }
+            if(fatherOccupation.length()!=0){
+                fields[cur]="father_occupation";
+                values[cur]=fatherOccupation;
+                cur++;
+            }
+            if(motherName.length()!=0){
+                fields[cur]="mother_name";
+                values[cur]=motherName;
+                cur++;
+            }
+            if(motherPhone.length()!=0){
+                fields[cur]="mother_phone";
+                values[cur]=motherPhone;
+                cur++;
+            }
+            if(motherEmail.length()!=0){
+                fields[cur]="mother_email";
+                values[cur]=motherEmail;
+                cur++;
+            }
+            if(motherOccupation.length()!=0){
+                fields[cur]="mother_occupation";
+                values[cur]=motherOccupation;
+                cur++;
+            }
             String placeholders="";
             for(int i=0;i<cur;i++){
                 placeholders+="?,";
@@ -106,6 +168,11 @@ public class StudentProfile {
 
         }
     }
+
+    public static void createProfile(String fullName,String email,String phone,String college,String course,int year,String bio,String githubUrl,String linkedinUrl) throws RoleException,SQLException,MissingFieldException{
+        createProfile(fullName, email, phone, college, course, year, bio, githubUrl, linkedinUrl, "", "", "", "", "", "", "", "", "", "");
+    }
+
     public static StudentProfileModel getProfile() throws RoleException,SQLException,GeneralException{// this is not complete this should include all the other things like skills also
         Role role=Session.getRole();
         int userId=Session.getId();
@@ -133,6 +200,16 @@ public class StudentProfile {
             String bio=rs.getString("bio");
             String githubUrl=rs.getString("github_url");
             String linkedinUrl=rs.getString("linkedin_url");
+            String hobbies=rs.getString("hobbies");
+            String dob=rs.getString("dob");
+            String fatherName=rs.getString("father_name");
+            String fatherPhone=rs.getString("father_phone");
+            String fatherEmail=rs.getString("father_email");
+            String fatherOccupation=rs.getString("father_occupation");
+            String motherName=rs.getString("mother_name");
+            String motherPhone=rs.getString("mother_phone");
+            String motherEmail=rs.getString("mother_email");
+            String motherOccupation=rs.getString("mother_occupation");
             String skills[]=Skills.getSkills();
             ProjectModel projects[]=Projects.getProjects();
             AchievementModel achievements[]=Achievements.getAchievements();
@@ -152,6 +229,16 @@ public class StudentProfile {
                 bio,
                 githubUrl,
                 linkedinUrl,
+                hobbies,
+                dob,
+                fatherName,
+                fatherPhone,
+                fatherEmail,
+                fatherOccupation,
+                motherName,
+                motherPhone,
+                motherEmail,
+                motherOccupation,
                 skills,
                 projects,
                 achievements,
@@ -184,11 +271,29 @@ public class StudentProfile {
     }
 
 
-    public static void updateProfile(String fullName,String email,String phone,String college,String course,int year,int currentSemester,String bio,String githubUrl,String linkedinUrl) throws MissingFieldException,RoleException,SQLException,GeneralException{
+    public static void updateProfile(String fullName,String email,String phone,String college,String course,int year,int currentSemester,String bio,String githubUrl,String linkedinUrl,
+            String hobbies, String dob, String fatherName, String fatherPhone, String fatherEmail, String fatherOccupation,
+            String motherName, String motherPhone, String motherEmail, String motherOccupation) throws MissingFieldException,RoleException,SQLException,GeneralException{
         Role role=Session.getRole();
         int userId=Session.getId();
-        fullName=fullName.trim();
-        email=email.trim();
+        fullName=fullName==null?"":fullName.trim();
+        email=email==null?"":email.trim();
+        phone=phone==null?"":phone.trim();
+        college=college==null?"":college.trim();
+        course=course==null?"":course.trim();
+        bio=bio==null?"":bio.trim();
+        githubUrl=githubUrl==null?"":githubUrl.trim();
+        linkedinUrl=linkedinUrl==null?"":linkedinUrl.trim();
+        hobbies=hobbies==null?"":hobbies.trim();
+        dob=dob==null?"":dob.trim();
+        fatherName=fatherName==null?"":fatherName.trim();
+        fatherPhone=fatherPhone==null?"":fatherPhone.trim();
+        fatherEmail=fatherEmail==null?"":fatherEmail.trim();
+        fatherOccupation=fatherOccupation==null?"":fatherOccupation.trim();
+        motherName=motherName==null?"":motherName.trim();
+        motherPhone=motherPhone==null?"":motherPhone.trim();
+        motherEmail=motherEmail==null?"":motherEmail.trim();
+        motherOccupation=motherOccupation==null?"":motherOccupation.trim();
         if(fullName.length()==0){
             throw new MissingFieldException("fullName");
         }
@@ -209,7 +314,8 @@ public class StudentProfile {
                 throw new GeneralException("User profile does not exist");
             }
             
-            String query="UPDATE students SET full_name = ?,email = ?,phone = ?,college = ?,course = ?,year = ?,current_semester = ?,bio = ?,github_url = ?,linkedin_url = ? WHERE user_id = "+userId;
+            String query="UPDATE students SET full_name = ?,email = ?,phone = ?,college = ?,course = ?,year = ?,current_semester = ?,bio = ?,github_url = ?,linkedin_url = ?,"
+                    + "hobbies = ?,dob = ?,father_name = ?,father_phone = ?,father_email = ?,father_occupation = ?,mother_name = ?,mother_phone = ?,mother_email = ?,mother_occupation = ? WHERE user_id = "+userId;
             statement=connection.prepareStatement(query);
             setValue(statement,1,fullName);
             setValue(statement,2,email);
@@ -221,6 +327,16 @@ public class StudentProfile {
             setValue(statement,8,bio);
             setValue(statement,9,githubUrl);
             setValue(statement,10,linkedinUrl);
+            setValue(statement,11,hobbies);
+            setValue(statement,12,dob);
+            setValue(statement,13,fatherName);
+            setValue(statement,14,fatherPhone);
+            setValue(statement,15,fatherEmail);
+            setValue(statement,16,fatherOccupation);
+            setValue(statement,17,motherName);
+            setValue(statement,18,motherPhone);
+            setValue(statement,19,motherEmail);
+            setValue(statement,20,motherOccupation);
 
             statement.executeUpdate();
         }finally{
@@ -234,6 +350,10 @@ public class StudentProfile {
                 rs.close();
             }
         }
+    }
+
+    public static void updateProfile(String fullName,String email,String phone,String college,String course,int year,int currentSemester,String bio,String githubUrl,String linkedinUrl) throws MissingFieldException,RoleException,SQLException,GeneralException{
+        updateProfile(fullName, email, phone, college, course, year, currentSemester, bio, githubUrl, linkedinUrl, "", "", "", "", "", "", "", "", "", "");
     }
 
 
@@ -295,7 +415,7 @@ public class StudentProfile {
         }
     }
     private static void setValue(PreparedStatement s,int index,String value) throws SQLException{
-        if(value.length()==0){
+        if(value==null || value.length()==0){
             s.setNull(index,Types.VARCHAR);
         }else{
             s.setString(index,value);

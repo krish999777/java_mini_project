@@ -12,6 +12,16 @@ public class StudentProfileModel {
     public String bio;
     public String githubUrl;
     public String linkedinUrl;
+    public String hobbies;
+    public String dob;
+    public String fatherName;
+    public String fatherPhone;
+    public String fatherEmail;
+    public String fatherOccupation;
+    public String motherName;
+    public String motherPhone;
+    public String motherEmail;
+    public String motherOccupation;
     public String skills[];
     public ProjectModel projects[];
     public AchievementModel achievements[];
@@ -22,7 +32,8 @@ public class StudentProfileModel {
 
     // public StudentProfileModel(){}//this is for testing only
     public StudentProfileModel(int i, String f, String e, String p, String col, String cou, int y, int sem, String b, String g,
-            String l, String s[], ProjectModel pr[], AchievementModel a[], CertificationModel c[], InternshipModel in[],
+            String l, String hob, String db, String fn, String fp, String fe, String fo, String mn, String mp, String me, String mo,
+            String s[], ProjectModel pr[], AchievementModel a[], CertificationModel c[], InternshipModel in[],
             EducationModel ed[], SemesterMarkModel sm[]) {
         id = i;
         fullName = f;
@@ -35,6 +46,16 @@ public class StudentProfileModel {
         bio = b;
         githubUrl = g;
         linkedinUrl = l;
+        hobbies = hob;
+        dob = db;
+        fatherName = fn;
+        fatherPhone = fp;
+        fatherEmail = fe;
+        fatherOccupation = fo;
+        motherName = mn;
+        motherPhone = mp;
+        motherEmail = me;
+        motherOccupation = mo;
         skills = s;
         projects = pr;
         achievements = a;
@@ -44,10 +65,23 @@ public class StudentProfileModel {
         semesterMarks = sm;
     }
 
+    public StudentProfileModel(int i, String f, String e, String p, String col, String cou, int y, int sem, String b, String g,
+            String l, String s[], ProjectModel pr[], AchievementModel a[], CertificationModel c[], InternshipModel in[],
+            EducationModel ed[], SemesterMarkModel sm[]) {
+        this(i, f, e, p, col, cou, y, sem, b, g, l, "", "", "", "", "", "", "", "", "", "", s, pr, a, c, in, ed, sm);
+    }
+
     public StudentProfileModel(int i, String f, String e, String p, String col, String cou, int y, String b, String g,
             String l, String s[], ProjectModel pr[], AchievementModel a[], CertificationModel c[], InternshipModel in[],
             EducationModel ed[]) {
         this(i, f, e, p, col, cou, y, 1, b, g, l, s, pr, a, c, in, ed, new SemesterMarkModel[0]);
+    }
+
+    public StudentProfileModel(int i, String f, String e, String p, String col, String cou, int y, int sem, String b, String g,
+            String l, String hob, String db, String fn, String fp, String fe, String fo, String mn, String mp, String me, String mo) {
+        this(i, f, e, p, col, cou, y, sem, b, g, l, hob, db, fn, fp, fe, fo, mn, mp, me, mo,
+                new String[0], new ProjectModel[0], new AchievementModel[0],
+                new CertificationModel[0], new InternshipModel[0], new EducationModel[0], new SemesterMarkModel[0]);
     }
 
     public StudentProfileModel(int i, String f, String e, String p, String col, String cou, int y, int sem, String b, String g,
@@ -64,7 +98,10 @@ public class StudentProfileModel {
     public String toString() {
         String str = "id:" + id + "\n" + "full name:" + fullName + "\n" + "email:" + email + "\n" + "phone:" + phone
                 + "\n" + "college:" + college + "\n" + "course:" + course + "\n" + "year:" + year + "\n" + "currentSemester:" + currentSemester + "\n" + "bio:" + bio
-                + "\n" + "githubUrl:" + githubUrl + "\n" + "linkedinUrl:" + linkedinUrl + "\n";
+                + "\n" + "githubUrl:" + githubUrl + "\n" + "linkedinUrl:" + linkedinUrl
+                + "\n" + "hobbies:" + hobbies + "\n" + "dob:" + dob
+                + "\n" + "fatherName:" + fatherName + "\n" + "fatherPhone:" + fatherPhone + "\n" + "fatherEmail:" + fatherEmail + "\n" + "fatherOccupation:" + fatherOccupation
+                + "\n" + "motherName:" + motherName + "\n" + "motherPhone:" + motherPhone + "\n" + "motherEmail:" + motherEmail + "\n" + "motherOccupation:" + motherOccupation + "\n";
         str += "--- skills ---\n";
         if (skills != null) {
             for (int i = 0; i < skills.length; i++) {

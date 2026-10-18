@@ -373,6 +373,16 @@ class StudentDetailGUI extends JFrame implements ActionListener {
                 addProfileField(profile, p.bio, "Bio");
                 addProfileField(profile, p.githubUrl, "Github url");
                 addProfileField(profile, p.linkedinUrl, "Linkedin url");
+                addProfileField(profile, p.dob, "Date of birth");
+                addProfileField(profile, p.hobbies, "Hobbies");
+                addProfileField(profile, p.fatherName, "Name of father");
+                addProfileField(profile, p.fatherPhone, "Father's mobile number");
+                addProfileField(profile, p.fatherEmail, "Father's email ID");
+                addProfileField(profile, p.fatherOccupation, "Father's occupation");
+                addProfileField(profile, p.motherName, "Name of mother");
+                addProfileField(profile, p.motherPhone, "Mother's mobile number");
+                addProfileField(profile, p.motherEmail, "Mother's email ID");
+                addProfileField(profile, p.motherOccupation, "Mother's occupation");
 
                 // Skills table
                 List<Object[]> skillRows = new ArrayList<>();

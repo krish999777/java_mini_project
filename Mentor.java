@@ -147,6 +147,16 @@ public class Mentor {
             String bio = rs.getString("bio");
             String githubUrl = rs.getString("github_url");
             String linkedinUrl = rs.getString("linkedin_url");
+            String hobbies = rs.getString("hobbies");
+            String dob = rs.getString("dob");
+            String fatherName = rs.getString("father_name");
+            String fatherPhone = rs.getString("father_phone");
+            String fatherEmail = rs.getString("father_email");
+            String fatherOccupation = rs.getString("father_occupation");
+            String motherName = rs.getString("mother_name");
+            String motherPhone = rs.getString("mother_phone");
+            String motherEmail = rs.getString("mother_email");
+            String motherOccupation = rs.getString("mother_occupation");
             String skills[] = getStudentSkills(connection, id);
             ProjectModel projects[] = getStudentProjects(connection, id);
             AchievementModel achievements[] = getStudentAchievements(connection, id);
@@ -166,6 +176,16 @@ public class Mentor {
                     bio,
                     githubUrl,
                     linkedinUrl,
+                    hobbies,
+                    dob,
+                    fatherName,
+                    fatherPhone,
+                    fatherEmail,
+                    fatherOccupation,
+                    motherName,
+                    motherPhone,
+                    motherEmail,
+                    motherOccupation,
                     skills,
                     projects,
                     achievements,
